@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import vietmobi.net.noteapp.R;
-import vietmobi.net.noteapp.fragment.AddNoteFragment;
 import vietmobi.net.noteapp.fragment.AllNoteFragment;
 import vietmobi.net.noteapp.fragment.FavoriteFragment;
 import vietmobi.net.noteapp.fragment.FindNoteFragment;
@@ -25,7 +24,7 @@ import vietmobi.net.noteapp.fragment.FolderNoteFragment;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     BottomNavigationView bottomNavigation;
     ImageView btnSettings;
-
+    FloatingActionButton btnAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void addEvents() {
         btnSettings.setOnClickListener(this);
+        btnAdd.setOnClickListener(this);
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -49,10 +49,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         return true;
                     case R.id.navigation_all_note:
                         fragment = new AllNoteFragment();
-                        loadFragment(fragment);
-                        return true;
-                    case R.id.navigation_add:
-                        fragment = new AddNoteFragment();
                         loadFragment(fragment);
                         return true;
                     case R.id.navigation_folder:
@@ -81,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnSettings:
                 goToSettings();
                 break;
+            case R.id.btnAdd:
+                Intent intent = new Intent(MainActivity.this,AddNoteActivity.class);
+                startActivity(intent);
         }
     }
 

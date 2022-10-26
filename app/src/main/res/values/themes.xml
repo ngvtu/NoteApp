@@ -12,5 +12,22 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">#48454e</item>
         <!-- Customize your theme here. -->
+        <item name="colorControlActivated">@color/orange</item>
+
+
+    </style>
+    <style name="CustomEditTextTheme" parent="TextAppearance.AppCompat">
+        <item name="colorAccent">@color/orange</item>
+    </style>
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name="android:textColor">@color/colorIcon</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:background">@color/colorDialog</item>
+        <item name="android:textColorPrimary">@color/colorIcon</item>
+    </style>
+    <style name="Theme.Fab_Bottom_app_bar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#0F9D58</item>
+        <item name="colorPrimaryVariant">#0F9D58</item>
+        <item name="colorOnPrimary">#000</item>
     </style>
 </resources>

@@ -9,9 +9,9 @@
         android:icon="@drawable/ic_favorite"
         android:title="Favorite" />
     <item
-        android:id="@+id/navigation_add"
-        android:icon="@drawable/ic_plus"
-        android:title="New note" />
+        android:id="@+id/placeholder"
+        android:title="" />
+
     <item
         android:id="@+id/navigation_folder"
         android:icon="@drawable/ic_folder"
