@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_all_note"
+        android:icon="@drawable/ic_document"
+        android:title="All Note" />
+    <item
+        android:id="@+id/navigation_favorite"
+        android:icon="@drawable/ic_favorite"
+        android:title="Favorite" />
+    <item
+        android:id="@+id/navigation_add"
+        android:icon="@drawable/ic_plus"
+        android:title="New note" />
+    <item
+        android:id="@+id/navigation_folder"
+        android:icon="@drawable/ic_folder"
+        android:title="Folder" />
+
+    <item
+        android:id="@+id/navigation_find"
+        android:icon="@drawable/ic_search"
+        android:title="Search" />
+
+</menu>
