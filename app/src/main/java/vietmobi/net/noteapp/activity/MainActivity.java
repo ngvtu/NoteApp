@@ -25,19 +25,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     BottomNavigationView bottomNavigation;
     ImageView btnSettings;
     FloatingActionButton btnAdd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initViews();
-        loadFragment(new AllNoteFragment());
         addEvents();
+        loadFragment(new AllNoteFragment());
     }
 
     private void addEvents() {
         btnSettings.setOnClickListener(this);
-        btnAdd.setOnClickListener(this);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
+                startActivity(intent);
+            }
+        });
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -77,15 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnSettings:
                 goToSettings();
                 break;
-            case R.id.btnAdd:
-                Intent intent = new Intent(MainActivity.this,AddNoteActivity.class);
-                startActivity(intent);
         }
     }
 
     private void goToSettings() {
         Toast.makeText(this, "Go to settings", Toast.LENGTH_SHORT).show();
     }
+
     private void loadFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_container, fragment);
