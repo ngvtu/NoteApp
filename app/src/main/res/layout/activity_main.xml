@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/bg_all_note" />
+        app:srcCompat="@drawable/img_bg_all_note" />
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"

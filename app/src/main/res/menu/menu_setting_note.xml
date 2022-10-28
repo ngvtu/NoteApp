@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/add_to_favorite"
+        android:icon="@drawable/ic_favorite"
+        android:title="Add to favorite" />
+    <item
+        android:id="@+id/move"
+        android:icon="@drawable/ic_move_to_favorite"
+        android:title="Move to folder" />
+
+    <item
+        android:id="@+id/share"
+        android:icon="@drawable/ic_share"
+        android:title="Share">
+        <menu>
+            <item
+                android:id="@+id/share_pdf"
+                android:icon="@drawable/ic_pdf"
+                android:title="File Pdf" />
+            <item
+                android:id="@+id/share_text_file"
+                android:icon="@drawable/ic_text"
+                android:title="Text file" />
+            <item
+                android:id="@+id/share_file_document"
+                android:icon="@drawable/ic_document"
+                android:title="Document" />
+        </menu>
+    </item>
+
+
+    <item
+        android:id="@+id/lock"
+        android:icon="@drawable/ic_lock"
+        android:title="Lock" />
+    <item
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_delete"
+        android:title="Delete" />
+</menu>

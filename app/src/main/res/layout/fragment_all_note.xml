@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_all_note"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="2dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.AllNoteFragment">
 
@@ -11,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:src="@drawable/bg_all_note" />
+        android:src="@drawable/img_bg_all_note" />
 
     <TextView
         android:id="@+id/textView5"
@@ -24,5 +26,12 @@
         android:textColor="#841918"
         android:textSize="30sp"
         android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvListAllNote"
+        android:layout_width="match_parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

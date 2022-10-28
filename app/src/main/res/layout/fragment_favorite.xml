@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:src="@drawable/bg_favorite_note" />
+        android:src="@drawable/img_bg_favorite_note" />
 
     <TextView
         android:id="@+id/textView5"

@@ -1,18 +1,10 @@
 package vietmobi.net.noteapp.activity;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import vietmobi.net.noteapp.DialogSettings;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.fragment.AllNoteFragment;
 import vietmobi.net.noteapp.fragment.FavoriteFragment;
@@ -32,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     BottomNavigationView bottomNavigation;
     ImageView btnSettings;
     FloatingActionButton btnAdd;
+    DialogSettings dialogSettings = new DialogSettings();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initViews();
         addEvents();
-        loadFragment(new FavoriteFragment());
+        loadFragment(new AllNoteFragment());
     }
 
     private void addEvents() {
@@ -84,86 +78,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnSettings:
-                goToSettings();
+                dialogSettings.showDialogSettings(this);
                 break;
             case R.id.btnAdd:
                 Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
                 startActivity(intent);
                 break;
         }
-    }
-
-    private void goToSettings() {
-        showDialogSettings();
-    }
-
-    private void showDialogSettings() {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.bottom_sheet_layout);
-
-        TextView tvChangePasswd = dialog.findViewById(R.id.tvChangePasswd);
-        TextView tvDeletePasswd = dialog.findViewById(R.id.tvDeletePasswd);
-        TextView tvAuthentication = dialog.findViewById(R.id.tvAuthentication);
-        TextView tvPrivacyPolicy = dialog.findViewById(R.id.tvPrivacyPolicy);
-        TextView tvMoreApp = dialog.findViewById(R.id.tvMoreApp);
-        TextView tvShareWF = dialog.findViewById(R.id.tvShareWF);
-        TextView tvRateMe5Star = dialog.findViewById(R.id.tvRateMe5Star);
-        TextView tvFeedback = dialog.findViewById(R.id.tvFeedback);
-        tvChangePasswd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "ChangePassword", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvDeletePasswd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "DeletePassword", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvAuthentication.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Authentication", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvPrivacyPolicy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "PrivacyPolicy", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvMoreApp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "MoreApp", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvShareWF.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "ShareWithFriend", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvRateMe5Star.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "RateMe5Star", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "FeedBack", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
     private void loadFragment(Fragment fragment) {

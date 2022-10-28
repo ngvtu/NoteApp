@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Calendar;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.R;
 
@@ -17,7 +19,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     ImageView btnBack;
     Button btnSave;
     EditText edtTitle, edtContent;
-
     String title, content;
 
     @Override
@@ -33,7 +34,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         edtTitle.setSelection(0);
         btnBack.setOnClickListener(this);
         btnSave.setOnClickListener(this);
-
     }
 
     private void initViews() {
@@ -103,6 +103,10 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void saveNoteToDB() {
-        Toast.makeText(this, "Save in database", Toast.LENGTH_SHORT).show();
+        String title = edtTitle.getText().toString();
+        String content = edtContent.getText().toString();
+        String time = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+        Toast.makeText(this, time, Toast.LENGTH_LONG).show();
     }
+
 }

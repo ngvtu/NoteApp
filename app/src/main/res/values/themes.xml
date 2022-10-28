@@ -16,22 +16,30 @@
 
 
     </style>
+
     <style name="CustomEditTextTheme" parent="TextAppearance.AppCompat">
         <item name="colorAccent">@color/orange</item>
     </style>
+
     <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
         <item name="android:textColor">@color/colorIcon</item>
         <item name="android:typeface">monospace</item>
         <item name="android:background">@color/colorDialog</item>
         <item name="android:textColorPrimary">@color/colorIcon</item>
     </style>
+
     <style name="Theme.Fab_Bottom_app_bar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">#0F9D58</item>
         <item name="colorPrimaryVariant">#0F9D58</item>
         <item name="colorOnPrimary">#000</item>
     </style>
+
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
         <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/colorDialog</item>
     </style>
 </resources>
