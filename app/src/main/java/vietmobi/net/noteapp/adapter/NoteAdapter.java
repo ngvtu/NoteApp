@@ -13,18 +13,28 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.RecyclerViewInterface;
 import vietmobi.net.noteapp.model.Note;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private ArrayList<Note> listNote;
+    private final RecyclerViewInterface recyclerViewInterface;
+
+    private List<Note> listNote;
     private Context context;
 
-    public NoteAdapter(ArrayList listNote, Context context) {
+
+    public NoteAdapter( List listNote, Context context,RecyclerViewInterface recyclerViewInterface) {
         this.listNote = listNote;
         this.context = context;
+        this.recyclerViewInterface = recyclerViewInterface;
+    }
+
+    public void setData(List<Note> noteArrayList) {
+        this.listNote = noteArrayList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -32,13 +42,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.line_note, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, recyclerViewInterface);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.btnMenu.setImageResource(R.drawable.ic_menu_vertical);
         Note note = listNote.get(position);
+        if (note == null) {
+            return;
+        }
+        holder.btnMenu.setImageResource(R.drawable.ic_menu_vertical);
         holder.tvContent.setText(note.getContent());
         holder.tvTitle.setText(note.getTitle());
         holder.tvLastTimeEdit.setText(note.getTime());
@@ -46,15 +59,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return listNote.size();
+        if (listNote != null) {
+            return listNote.size();
+        }
+        return 0;
     }
 
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView btnMenu;
         TextView tvTitle, tvContent, tvLastTimeEdit;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
 
             this.btnMenu = itemView.findViewById(R.id.btnMenu);
@@ -90,6 +105,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                         }
                     });
                     popupMenu.show();
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (recyclerViewInterface != null){
+                        int position= getAdapterPosition();
+
+                        if (position != RecyclerView.NO_POSITION){
+                            recyclerViewInterface.onItemClick(position);
+                        }
+                    }
                 }
             });
 

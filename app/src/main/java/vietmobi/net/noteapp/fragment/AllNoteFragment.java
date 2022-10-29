@@ -11,23 +11,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.RecyclerViewInterface;
 import vietmobi.net.noteapp.adapter.NoteAdapter;
+import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Note;
 
-public class AllNoteFragment extends Fragment {
+public class AllNoteFragment extends Fragment implements RecyclerViewInterface{
     RecyclerView rcvListAllNote;
     NoteAdapter noteAdapter;
-    ArrayList<Note> listNote;
+    List<Note> listNote;
     String title, content, time;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_all_note, container, false);
         initViews(view);
-        addNote();
+        configNote(view);
         return view;
     }
 
@@ -36,22 +40,30 @@ public class AllNoteFragment extends Fragment {
 
     }
 
-    private void addNote() {
+    private void configNote(View view) {
+        noteAdapter = new NoteAdapter(listNote, view.getContext(),this);
         listNote = new ArrayList<>();
-        listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","AaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaa","12/12/2001"));listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","AaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaa","12/12/2001"));listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","AaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaa","12/12/2001"));listNote.add(new Note("Test","Aaaaaaaaaaaaaa","12/12/2001"));
-        listNote.add(new Note("Test","AaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaaAaaaaaaaaaaaaa","12/12/2001"));
-        LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 2);
 
-        noteAdapter = new NoteAdapter(listNote, getActivity());
-        rcvListAllNote.setAdapter(noteAdapter);
+        loadData(view);
+
+        LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 2);
         rcvListAllNote.setLayoutManager(linearLayoutManager);
+        rcvListAllNote.setAdapter(noteAdapter);
+
+    }
+
+    private void loadData(View view) {
+        listNote = NoteDatabase.getInstance(view.getContext()).noteDAO().getListNote();
+        noteAdapter.setData(listNote);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+
     }
 }

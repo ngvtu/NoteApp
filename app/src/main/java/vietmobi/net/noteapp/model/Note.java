@@ -1,13 +1,29 @@
 package vietmobi.net.noteapp.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+
+@Entity(tableName = "all_note")
 public class Note implements Serializable {
-    private String id;
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    //ColumnInfo(title = "title_column")
     private String title;
     private String content;
     private boolean isFavorite;
     private String time;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Note(String title, String content, boolean isFavorite, String time) {
         this.title = title;
