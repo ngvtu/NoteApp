@@ -1,10 +1,15 @@
 package vietmobi.net.noteapp.fragment;
 
+import static vietmobi.net.noteapp.adapter.NoteAdapter.MY_REQUEST_CODE;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +28,6 @@ public class AllNoteFragment extends Fragment implements RecyclerViewInterface{
     RecyclerView rcvListAllNote;
     NoteAdapter noteAdapter;
     List<Note> listNote;
-    String title, content, time;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,7 +45,7 @@ public class AllNoteFragment extends Fragment implements RecyclerViewInterface{
     }
 
     private void configNote(View view) {
-        noteAdapter = new NoteAdapter(listNote, view.getContext(),this);
+        noteAdapter = new NoteAdapter(listNote, view.getContext());
         listNote = new ArrayList<>();
 
         loadData(view);
@@ -66,4 +70,11 @@ public class AllNoteFragment extends Fragment implements RecyclerViewInterface{
     public void onItemLongClick(int position) {
 
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data, View view) {
+        super.onActivityResult(requestCode, resultCode, data);
+            loadData(view);
+    }
+
 }

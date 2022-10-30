@@ -1,12 +1,16 @@
 package vietmobi.net.noteapp.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,19 +21,20 @@ import java.util.List;
 
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.RecyclerViewInterface;
+import vietmobi.net.noteapp.activity.MainActivity;
+import vietmobi.net.noteapp.activity.UpdateNoteActivity;
 import vietmobi.net.noteapp.model.Note;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private final RecyclerViewInterface recyclerViewInterface;
 
+    public static final int MY_REQUEST_CODE = 10;
     private List<Note> listNote;
     private Context context;
 
 
-    public NoteAdapter( List listNote, Context context,RecyclerViewInterface recyclerViewInterface) {
+    public NoteAdapter( List listNote, Context context) {
         this.listNote = listNote;
         this.context = context;
-        this.recyclerViewInterface = recyclerViewInterface;
     }
 
     public void setData(List<Note> noteArrayList) {
@@ -42,12 +47,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.line_note, parent, false);
-        return new ViewHolder(view, recyclerViewInterface);
+
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Note note = listNote.get(position);
+        final Note note = listNote.get(position);
         if (note == null) {
             return;
         }
@@ -55,6 +61,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         holder.tvContent.setText(note.getContent());
         holder.tvTitle.setText(note.getTitle());
         holder.tvLastTimeEdit.setText(note.getTime());
+
+        holder.line_note.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickGoToUpDate(note, view);
+            }
+        });
+    }
+
+    private void onClickGoToUpDate(Note note, View view) {
+        Intent intent = new Intent(context, UpdateNoteActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("note", note);
+        intent.putExtras(bundle);
+
+        ((Activity) context).startActivityForResult(intent,MY_REQUEST_CODE);
+        context.startActivity(intent);
     }
 
     @Override
@@ -66,16 +89,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        RelativeLayout line_note;
         ImageView btnMenu;
         TextView tvTitle, tvContent, tvLastTimeEdit;
 
-        public ViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             this.btnMenu = itemView.findViewById(R.id.btnMenu);
             this.tvTitle = itemView.findViewById(R.id.tvTitle);
             this.tvContent = itemView.findViewById(R.id.tvContent);
+            this.line_note = itemView.findViewById(R.id.line_note);
             this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
+
             btnMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -107,20 +133,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                     popupMenu.show();
                 }
             });
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (recyclerViewInterface != null){
-                        int position= getAdapterPosition();
-
-                        if (position != RecyclerView.NO_POSITION){
-                            recyclerViewInterface.onItemClick(position);
-                        }
-                    }
-                }
-            });
-
         }
     }
 }
