@@ -119,6 +119,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
 
     private void upDateNoteToDatabase() {
         //Update Note
+        Note note = new Note();
         note.setContent(edtContent.getText().toString());
         note.setTitle(edtContent.getText().toString());
         note.setTime(java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()));

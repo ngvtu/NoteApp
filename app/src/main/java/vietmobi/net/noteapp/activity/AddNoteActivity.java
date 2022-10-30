@@ -114,6 +114,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+    
     private void saveNoteToDB() {
         String title = edtTitle.getText().toString();
         String content = edtContent.getText().toString();

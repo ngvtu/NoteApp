@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         fragment = new FindNoteFragment();
                         loadFragment(fragment);
                         return true;
-
                 }
                 return false;
             }
