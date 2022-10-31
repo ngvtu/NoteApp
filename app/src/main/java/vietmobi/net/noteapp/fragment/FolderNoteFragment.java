@@ -33,7 +33,7 @@ public class FolderNoteFragment extends Fragment {
         return view;
     }
 
-    private void addData() {
+    public void addData() {
         noteAdapter = new FolderAdapter(listFolder, getContext());
         listFolder = new ArrayList<>();
 

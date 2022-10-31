@@ -2,9 +2,11 @@ package vietmobi.net.noteapp.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.database.FolderNoteDatabase;
+import vietmobi.net.noteapp.database.FolderNoteDatabase_Impl;
+import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder>{
@@ -56,7 +62,43 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
             @Override
             public void onClick(View view) {
                 onClickShowAllNote();
-                Toast.makeText(context,  "oke", Toast.LENGTH_SHORT).show();
+                PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_settings_folder, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.edit:
+                                Toast.makeText(context, "Edit", Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.delete:
+                                new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                                        .setTitleText("Confirm delete note")
+                                        .setContentText("Are you sure?")
+                                        .setConfirmText("Yes")
+                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                                NoteDatabase.getInstance(context).noteDAO().deleteNote(note);
+                                                Toast.makeText(context, "Delete note successfully", Toast.LENGTH_SHORT).show();
+                                                FolderNoteDatabase.getInstance(context).folderNoteDAO().deleteFolder(folder);
+                                                sweetAlertDialog.dismissWithAnimation();
+                                                notifyDataSetChanged();
+                                            }
+                                        })
+                                        .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
+                                            @Override
+                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                sweetAlertDialog.dismissWithAnimation();
+                                            }
+                                        })
+                                        .show();
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
             }
         });
     }

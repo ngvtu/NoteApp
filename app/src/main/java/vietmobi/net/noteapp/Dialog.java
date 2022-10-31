@@ -17,6 +17,7 @@ import java.util.Calendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
+import vietmobi.net.noteapp.fragment.FolderNoteFragment;
 import vietmobi.net.noteapp.model.Folder;
 
 public class Dialog {
