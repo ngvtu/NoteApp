@@ -1,7 +1,5 @@
 package vietmobi.net.noteapp.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
 
@@ -47,10 +47,11 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         if (bundle == null) {
             return;
         }
-        Note note = (Note) bundle.get("note");
+        note = (Note) bundle.get("note");
         edtTitle.setText(note.getTitle());
         edtContent.setText(note.getContent());
         edtTitle.requestFocus(edtContent.length());
+
         showKeyboard();
     }
 
@@ -60,6 +61,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()) {
             case R.id.btnBack:
                 checkNoteToBack(intent);
+                hiddenKeyboard();
                 break;
             case R.id.btnSave:
                 checkNoteToSave(intent);
@@ -76,6 +78,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         } else {
             upDateNoteToDatabase();
             startActivity(intent);
+            hiddenKeyboard();
         }
     }
 
@@ -119,15 +122,15 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
 
     private void upDateNoteToDatabase() {
         //Update Note
-        Note note = new Note();
         note.setContent(edtContent.getText().toString());
-        note.setTitle(edtContent.getText().toString());
+        note.setTitle(edtTitle.getText().toString());
         note.setTime(java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()));
 
         NoteDatabase.getInstance(this).noteDAO().updateNote(note);
         Toast.makeText(this, "Update note successfully", Toast.LENGTH_SHORT).show();
 
         Intent intentResult = new Intent();
+        hiddenKeyboard();
         setResult(Activity.RESULT_OK, intentResult);
         finish();
     }

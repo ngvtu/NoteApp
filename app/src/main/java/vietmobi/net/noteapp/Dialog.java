@@ -1,6 +1,5 @@
 package vietmobi.net.noteapp;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,11 +13,18 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class DialogSettings {
+import java.util.Calendar;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import vietmobi.net.noteapp.database.FolderNoteDatabase;
+import vietmobi.net.noteapp.model.Folder;
+
+public class Dialog {
     String PASSWORD = "1612";
+    Folder folder;
 
     public void showDialogChangePassWord(Context context) {
-        final Dialog dialog = new Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+        final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
         Window window = dialog.getWindow();
         dialog.setContentView(R.layout.dialog_change_passwd);
         TextInputLayout textInputLayout = dialog.findViewById(R.id.textInputLayout);
@@ -39,10 +45,10 @@ public class DialogSettings {
                 String pass = String.valueOf(edtOldPassWord.getText());
                 String newPass = String.valueOf(edtNewPassWord.getText());
                 if (pass.equals(PASSWORD)) {
-                    if (newPass.length() >= 4){
+                    if (newPass.length() >= 4) {
                         Toast.makeText(context, "Change Password Complete!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
-                    } else{
+                    } else {
                         textInputLayout2.setError("Password at least 4 numbers");
                         textInputLayout2.requestFocus();
                     }
@@ -59,7 +65,7 @@ public class DialogSettings {
     }
 
     public void showDialogDeletePassword(Context context) {
-        final Dialog dialog = new Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+        final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
         Window window = dialog.getWindow();
         dialog.setContentView(R.layout.dialog_delete_passwd);
         TextInputLayout textInputLayout = dialog.findViewById(R.id.textInputLayout2);
@@ -76,10 +82,10 @@ public class DialogSettings {
             @Override
             public void onClick(View view) {
                 String pass = String.valueOf(edtNewPassWorld.getText());
-                if (pass.equals(PASSWORD)){
+                if (pass.equals(PASSWORD)) {
                     Toast.makeText(context, "Delete Password", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
-                } else{
+                } else {
                     textInputLayout.setError("Invalid password");
                     textInputLayout.requestFocus();
                 }
@@ -90,8 +96,9 @@ public class DialogSettings {
         window.setGravity(Gravity.CENTER);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
-    public void showDialogSettings(Context context){
-        final Dialog dialog = new Dialog(context);
+
+    public void showDialogSettings(Context context) {
+        final android.app.Dialog dialog = new android.app.Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottom_sheet_settings);
 
@@ -106,13 +113,13 @@ public class DialogSettings {
         tvChangePasswd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            showDialogChangePassWord(context);
+                showDialogChangePassWord(context);
             }
         });
         tvDeletePasswd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            showDialogDeletePassword(context);
+                showDialogDeletePassword(context);
             }
         });
         tvAuthentication.setOnClickListener(new View.OnClickListener() {
@@ -157,5 +164,64 @@ public class DialogSettings {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
+
+    public void showDialogDelete(Context context) {
+        new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Confirm delete note")
+                .setContentText("Are you sure?")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Toast.makeText(context, "Delete note successfully", Toast.LENGTH_SHORT).show();
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
+    }
+
+    public void showDialogCreateFolder(Context context) {
+        final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+        Window window = dialog.getWindow();
+        dialog.setContentView(R.layout.dialog_create_folder);
+        TextInputLayout textInputLayout = dialog.findViewById(R.id.tilNameFolder);
+        TextInputEditText edtNameFolder = dialog.findViewById(R.id.edtNameFolder);
+        TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+        TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = String.valueOf(edtNameFolder.getText());
+                String timeLastEditNote = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+                if (name.length() <= 20 && name.length() > 0) {
+
+                    folder = new Folder(name, timeLastEditNote);
+                    FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().insertFolder(folder);
+
+                    Toast.makeText(context, "Create folder successfully!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    textInputLayout.setError("Less than 20 and greater than 0 characters");
+                    textInputLayout.requestFocus();
+                }
+            }
+        });
+        dialog.show();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 }

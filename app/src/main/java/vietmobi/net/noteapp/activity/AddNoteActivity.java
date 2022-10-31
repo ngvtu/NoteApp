@@ -1,8 +1,5 @@
 package vietmobi.net.noteapp.activity;
 
-import static vietmobi.net.noteapp.adapter.NoteAdapter.MY_REQUEST_CODE;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,16 +10,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import java.util.Calendar;
-import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.R;
-import vietmobi.net.noteapp.adapter.NoteAdapter;
 import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Note;
 
@@ -31,7 +24,6 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     Button btnSave;
     EditText edtTitle, edtContent;
     String title, content;
-    NoteAdapter noteAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +72,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         title = edtTitle.getText().toString();
         content = edtContent.getText().toString();
         if (title.equals("") && content.equals("")) {
-            startActivity(intent);
             hiddenKeyboard();
+            startActivity(intent);
         } else {
             new SweetAlertDialog(AddNoteActivity.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Xác nhận")
@@ -125,9 +117,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         // Insert Note to Database
         NoteDatabase.getInstance(this).noteDAO().insertNote(note);
         Toast.makeText(this, "Add Note successfully", Toast.LENGTH_SHORT).show();
-
         edtTitle.setText("");
         edtContent.setText("");
+        hiddenKeyboard();
     }
 
     private void initViews() {

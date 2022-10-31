@@ -14,8 +14,25 @@ public class Note implements Serializable {
     //ColumnInfo(title = "title_column")
     private String title;
     private String content;
+    private String ofFolder;
     private boolean isFavorite;
     private String time;
+
+    public Note(String title, String content, String ofFolder, boolean isFavorite, String time) {
+        this.title = title;
+        this.content = content;
+        this.ofFolder = ofFolder;
+        this.isFavorite = isFavorite;
+        this.time = time;
+    }
+
+    public String getOfFolder() {
+        return ofFolder;
+    }
+
+    public void setOfFolder(String ofFolder) {
+        this.ofFolder = ofFolder;
+    }
 
     public int getId() {
         return id;

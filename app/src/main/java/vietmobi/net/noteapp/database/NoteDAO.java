@@ -1,6 +1,7 @@
 package vietmobi.net.noteapp.database;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -19,6 +20,16 @@ public interface NoteDAO {
 
     @Query("select * from all_note where title = :title")
     List<Note> checkNote(String title);
+
     @Update
     void updateNote(Note note);
+
+    @Delete
+    void deleteNote(Note note);
+
+    @Query("delete from all_note")
+    void deleteAllNote();
+
+    @Query("select * from all_note where title like '%' || :title || '%'")
+    List<Note> findNote(String title);
 }
