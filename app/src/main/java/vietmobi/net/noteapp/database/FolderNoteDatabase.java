@@ -17,6 +17,7 @@ public abstract class FolderNoteDatabase extends RoomDatabase {
     public static synchronized FolderNoteDatabase getInstance(Context context){
         if (instance == null){
             instance = Room.databaseBuilder(context.getApplicationContext(), FolderNoteDatabase.class, DATABASE_NAME)
+                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build();
         }
