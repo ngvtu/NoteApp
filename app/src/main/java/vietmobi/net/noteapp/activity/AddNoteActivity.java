@@ -129,7 +129,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         edtContent = findViewById(R.id.edtContent);
     }
 
-    private void showKeyboard() {
+    public void showKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }

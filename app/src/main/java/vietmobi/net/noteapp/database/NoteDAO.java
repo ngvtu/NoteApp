@@ -32,4 +32,7 @@ public interface NoteDAO {
 
     @Query("select * from all_note where title like '%' || :title || '%'")
     List<Note> findNote(String title);
+
+    @Query("select * from all_note where isFavorite = 1")
+    List<Note> listFavoriteNote();
 }

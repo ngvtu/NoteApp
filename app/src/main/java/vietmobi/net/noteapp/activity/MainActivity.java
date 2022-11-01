@@ -21,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.RecyclerViewInterface;
+import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.fragment.AllNoteFragment;
 import vietmobi.net.noteapp.fragment.FavoriteFragment;
 import vietmobi.net.noteapp.fragment.FindNoteFragment;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                NoteDatabase.getInstance(view.getContext()).noteDAO().listFavoriteNote();
                                 Toast.makeText(MainActivity.this, "In favorite", Toast.LENGTH_SHORT).show();
                             }
                         });

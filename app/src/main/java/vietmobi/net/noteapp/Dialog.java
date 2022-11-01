@@ -10,19 +10,29 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import vietmobi.net.noteapp.adapter.FolderAdapter;
+import vietmobi.net.noteapp.adapter.ListFolderAdapter;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
-import vietmobi.net.noteapp.fragment.FolderNoteFragment;
 import vietmobi.net.noteapp.model.Folder;
 
 public class Dialog {
     String PASSWORD = "1612";
     Folder folder;
+    FolderAdapter folderAdapter;
+    ListFolderAdapter listFolderAdapter;
+    List<Folder> listFolder;
 
     public void showDialogChangePassWord(Context context) {
         final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
@@ -224,5 +234,75 @@ public class Dialog {
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    public void showDialogEditFolder(Context context) {
+        final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+        Window window = dialog.getWindow();
+        dialog.setContentView(R.layout.dialog_edit_folder);
+        TextInputLayout textInputLayout = dialog.findViewById(R.id.tilNameFolder);
+        TextInputEditText edtNameFolder = dialog.findViewById(R.id.edtNameFolder);
+        TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+        TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+        edtNameFolder.requestFocus();
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name = String.valueOf(edtNameFolder.getText());
+                String timeLastEditNote = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+                if (name.length() <= 20 && name.length() > 0) {
+
+                    folder = new Folder(name, timeLastEditNote);
+                    FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().updateFolder(folder);
+
+                    Toast.makeText(context, "Create folder successfully!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    textInputLayout.setError("Less than 20 and greater than 0 characters");
+                    textInputLayout.requestFocus();
+                }
+            }
+        });
+        dialog.show();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    public void showDialogMoveToFolder(Context context) {
+        final android.app.Dialog dialog = new android.app.Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_move_to_folder);
+
+        RecyclerView rcvListFolder = dialog.findViewById(R.id.rcvListFolder);
+        MaterialButton btnAddNewFolder = dialog.findViewById(R.id.btnAddNewFolder);
+        TextView tvNameFolder = dialog.findViewById(R.id.tvNameFolder);
+        btnAddNewFolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogCreateFolder(context);
+            }
+        });
+
+        listFolderAdapter = new ListFolderAdapter(listFolder, context);
+        listFolder = new ArrayList<>();
+        listFolder = FolderNoteDatabase.getInstance(context).folderNoteDAO().getListFolder();
+        listFolderAdapter.setData(listFolder);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        rcvListFolder.setLayoutManager(linearLayoutManager);
+        rcvListFolder.setAdapter(listFolderAdapter);
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 }

@@ -17,10 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
-import vietmobi.net.noteapp.database.FolderNoteDatabase_Impl;
-import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder>{
@@ -69,6 +68,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.edit:
+                                Dialog dialog = new Dialog();
+                                dialog.showDialogEditFolder(context);
                                 Toast.makeText(context, "Edit", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.delete:

@@ -30,14 +30,19 @@ public class FolderNoteFragment extends Fragment {
 
         rcvFolderNote = view.findViewById(R.id.rcvFolderNote);
         addData();
+        checkItem();
         return view;
+    }
+
+    private void checkItem() {
+
     }
 
     public void addData() {
         noteAdapter = new FolderAdapter(listFolder, getContext());
         listFolder = new ArrayList<>();
 
-        listFolder = FolderNoteDatabase.getInstance(getContext()).folderNoteDAO().getListNote();
+        listFolder = FolderNoteDatabase.getInstance(getContext()).folderNoteDAO().getListFolder();
         noteAdapter.setData(listFolder);
 
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 2);

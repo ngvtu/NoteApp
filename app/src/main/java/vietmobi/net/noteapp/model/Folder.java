@@ -11,19 +11,11 @@ public class Folder implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String nameFolder;
-    private int countNote;
     private String timeLastEditFolder;
-    private String title;
-    private String content;
-    private String timeLastEditNote;
 
     public Folder(String nameFolder, int countNote, String timeLastEditFolder, String title, String content, String timeLastEditNote) {
         this.nameFolder = nameFolder;
-        this.countNote = countNote;
         this.timeLastEditFolder = timeLastEditFolder;
-        this.title = title;
-        this.content = content;
-        this.timeLastEditNote = timeLastEditNote;
     }
 
     public Folder() {
@@ -50,13 +42,6 @@ public class Folder implements Serializable {
         this.nameFolder = nameFolder;
     }
 
-    public int getCountNote() {
-        return countNote;
-    }
-
-    public void setCountNote(int countNote) {
-        this.countNote = countNote;
-    }
 
     public String getTimeLastEditFolder() {
         return timeLastEditFolder;
@@ -64,29 +49,5 @@ public class Folder implements Serializable {
 
     public void setTimeLastEditFolder(String timeLastEditFolder) {
         this.timeLastEditFolder = timeLastEditFolder;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getTimeLastEditNote() {
-        return timeLastEditNote;
-    }
-
-    public void setTimeLastEditNote(String timeLastEditNote) {
-        this.timeLastEditNote = timeLastEditNote;
     }
 }

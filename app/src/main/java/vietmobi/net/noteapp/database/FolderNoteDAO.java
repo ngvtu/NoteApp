@@ -9,7 +9,6 @@ import androidx.room.Update;
 import java.util.List;
 
 import vietmobi.net.noteapp.model.Folder;
-import vietmobi.net.noteapp.model.Note;
 
 @Dao
 public interface FolderNoteDAO {
@@ -18,11 +17,11 @@ public interface FolderNoteDAO {
     void insertFolder(Folder folder);
 
     @Query("select * from folder_note")
-    List<Folder> getListNote();
+    List<Folder> getListFolder();
 
     @Delete
     void deleteFolder(Folder folder);
 
     @Update
-    void updateNote(Note note);
+    void updateFolder(Folder folder);
 }

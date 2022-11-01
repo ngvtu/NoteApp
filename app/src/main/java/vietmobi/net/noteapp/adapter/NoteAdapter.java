@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.RecyclerViewInterface;
 import vietmobi.net.noteapp.activity.UpdateNoteActivity;
@@ -32,6 +33,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     public static final int MY_REQUEST_CODE = 10;
     private List<Note> listNote;
     private Context context;
+    private boolean isLocked;
 
     public NoteAdapter(List listNote, Context context) {
         this.listNote = listNote;
@@ -80,16 +82,28 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.add_to_favorite:
+                                note.setFavorite(true);
+                                NoteDatabase.getInstance(view.getContext()).noteDAO().updateNote(note);
                                 Toast.makeText(view.getContext(), "Add to favorite", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.share:
                                 Toast.makeText(view.getContext(), "Share", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.move:
+                                Dialog dialog = new Dialog();
+                                dialog.showDialogMoveToFolder(view.getContext());
                                 Toast.makeText(view.getContext(), "Move", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.lock:
-                                Toast.makeText(view.getContext(), "lock", Toast.LENGTH_SHORT).show();
+                                if (holder.tvTitle.getVisibility() == View.INVISIBLE){
+                                    holder.tvTitle.setVisibility(View.GONE);
+                                    holder.tvContent.setVisibility(View.GONE);
+                                } else{
+                                    holder.tvTitle.setVisibility(View.VISIBLE);
+                                    holder.tvContent.setVisibility(View.VISIBLE);
+                                    holder.line_note.setBackgroundColor(R.drawable.bg_border_clean);
+                                    Toast.makeText(view.getContext(), "lock", Toast.LENGTH_SHORT).show();
+                                }
                                 return true;
                             case R.id.delete:
                                 deleteNote(note);
@@ -102,6 +116,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             }
         });
     }
+
 
     private void onClickGoToUpDate(Note note) {
         Intent intent = new Intent(context, UpdateNoteActivity.class);
