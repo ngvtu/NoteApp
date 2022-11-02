@@ -44,6 +44,7 @@ public class AllNoteFragment extends Fragment implements RecyclerViewInterface {
         listNote = new ArrayList<>();
 
         loadData();
+
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 2);
         rcvListAllNote.setLayoutManager(linearLayoutManager);
         rcvListAllNote.setAdapter(noteAdapter);

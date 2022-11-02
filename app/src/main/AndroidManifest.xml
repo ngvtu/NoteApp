@@ -13,6 +13,13 @@
         android:theme="@style/Theme.NoteApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.NoteOfFolderActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activity.UpdateNoteActivity"
             android:exported="false">
             <meta-data

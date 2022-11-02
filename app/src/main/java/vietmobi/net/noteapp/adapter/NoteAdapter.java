@@ -3,11 +3,15 @@ package vietmobi.net.noteapp.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
@@ -16,8 +20,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -25,7 +33,9 @@ import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.RecyclerViewInterface;
 import vietmobi.net.noteapp.activity.UpdateNoteActivity;
+import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.database.NoteDatabase;
+import vietmobi.net.noteapp.model.Folder;
 import vietmobi.net.noteapp.model.Note;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> implements RecyclerViewInterface {
@@ -34,6 +44,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     private List<Note> listNote;
     private Context context;
     private boolean isLocked;
+    Folder folder;
+    ListFolderAdapter listFolderAdapter;
+    List<Folder> listFolder;
 
     public NoteAdapter(List listNote, Context context) {
         this.listNote = listNote;
@@ -65,13 +78,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         holder.tvTitle.setText(note.getTitle());
         holder.tvLastTimeEdit.setText(note.getTime());
 
-        holder.line_note.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickGoToUpDate(note);
-            }
-        });
-
         holder.btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,20 +96,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                                 Toast.makeText(view.getContext(), "Share", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.move:
-                                Dialog dialog = new Dialog();
-                                dialog.showDialogMoveToFolder(view.getContext());
-                                Toast.makeText(view.getContext(), "Move", Toast.LENGTH_SHORT).show();
+                                showDialogMoveToFolder();
+                                note.setOfFolder("1");
                                 return true;
                             case R.id.lock:
-                                if (holder.tvTitle.getVisibility() == View.INVISIBLE){
-                                    holder.tvTitle.setVisibility(View.GONE);
-                                    holder.tvContent.setVisibility(View.GONE);
-                                } else{
-                                    holder.tvTitle.setVisibility(View.VISIBLE);
-                                    holder.tvContent.setVisibility(View.VISIBLE);
-                                    holder.line_note.setBackgroundColor(R.drawable.bg_border_clean);
-                                    Toast.makeText(view.getContext(), "lock", Toast.LENGTH_SHORT).show();
-                                }
                                 return true;
                             case R.id.delete:
                                 deleteNote(note);
@@ -117,7 +113,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         });
     }
 
-
     private void onClickGoToUpDate(Note note) {
         Intent intent = new Intent(context, UpdateNoteActivity.class);
         Bundle bundle = new Bundle();
@@ -128,6 +123,36 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         context.startActivity(intent);
     }
 
+    public void showDialogMoveToFolder() {
+        final android.app.Dialog dialog = new android.app.Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottom_sheet_move_to_folder);
+
+        RecyclerView rcvListFolder = dialog.findViewById(R.id.rcvListFolder);
+        MaterialButton btnAddNewFolder = dialog.findViewById(R.id.btnAddNewFolder);
+        btnAddNewFolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog dialog = new Dialog();
+                dialog.showDialogCreateFolder(context);
+            }
+        });
+
+        listFolderAdapter = new ListFolderAdapter(listFolder, context);
+        listFolder = new ArrayList<>();
+        listFolder = FolderNoteDatabase.getInstance(context).folderNoteDAO().getListFolder();
+        listFolderAdapter.setData(listFolder);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        rcvListFolder.setLayoutManager(linearLayoutManager);
+        rcvListFolder.setAdapter(listFolderAdapter);
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
 
     private void deleteNote(Note note) {
         new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
@@ -166,6 +191,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     public void loadFragment(Fragment fragment) {
 
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout line_note;

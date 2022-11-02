@@ -35,4 +35,7 @@ public interface NoteDAO {
 
     @Query("select * from all_note where isFavorite = 1")
     List<Note> listFavoriteNote();
+
+    @Query("select * from all_note where ofFolder = :id")
+    List<Note> listNoteOfFolder(int id);
 }

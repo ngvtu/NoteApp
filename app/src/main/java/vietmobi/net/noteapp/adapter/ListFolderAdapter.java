@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,12 +43,20 @@ public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Folder folder = new Folder();
+        Folder folder = listFolder.get(position);
         if (folder == null){
             return;
         }
         holder.tvNameFolder.setText(folder.getNameFolder());
         holder.tvTotal.setText("1");
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "" +folder.getId(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     @Override
@@ -55,8 +64,7 @@ public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.Vi
         return listFolder.size();
     }
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder{
         MaterialButton btnAddNewFolder;
         RecyclerView rcvListFolder;
         LinearLayout lineListFolder;

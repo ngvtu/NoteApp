@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import vietmobi.net.noteapp.adapter.FolderAdapter;
 import vietmobi.net.noteapp.adapter.ListFolderAdapter;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
@@ -30,7 +30,6 @@ import vietmobi.net.noteapp.model.Folder;
 public class Dialog {
     String PASSWORD = "1612";
     Folder folder;
-    FolderAdapter folderAdapter;
     ListFolderAdapter listFolderAdapter;
     List<Folder> listFolder;
 
@@ -240,11 +239,13 @@ public class Dialog {
         final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
         Window window = dialog.getWindow();
         dialog.setContentView(R.layout.dialog_edit_folder);
+
         TextInputLayout textInputLayout = dialog.findViewById(R.id.tilNameFolder);
         TextInputEditText edtNameFolder = dialog.findViewById(R.id.edtNameFolder);
         TextView btnCancel = dialog.findViewById(R.id.btnCancel);
         TextView btnAccept = dialog.findViewById(R.id.btnAccept);
         edtNameFolder.requestFocus();
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -282,7 +283,7 @@ public class Dialog {
 
         RecyclerView rcvListFolder = dialog.findViewById(R.id.rcvListFolder);
         MaterialButton btnAddNewFolder = dialog.findViewById(R.id.btnAddNewFolder);
-        TextView tvNameFolder = dialog.findViewById(R.id.tvNameFolder);
+        LinearLayout lineListFolder = dialog.findViewById(R.id.lineListFolder);
         btnAddNewFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
