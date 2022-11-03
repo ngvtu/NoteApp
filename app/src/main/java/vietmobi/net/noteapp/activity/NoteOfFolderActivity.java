@@ -1,7 +1,9 @@
 package vietmobi.net.noteapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -37,9 +39,11 @@ public class NoteOfFolderActivity extends AppCompatActivity {
         listNote = new ArrayList<>();
 
         tvNameFolder.getText().toString();
-        listNote = NoteDatabase.getInstance(this).noteDAO().listNoteOfFolder(1);
-        noteAdapter.setData(listNote);
+        Intent intent = getIntent();
+        int idFolder = intent.getIntExtra("id_folderNote", 0);
 
+        listNote = NoteDatabase.getInstance(this).noteDAO().listNoteOfFolder(idFolder);
+        noteAdapter.setData(listNote);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 2);
         rcvListAllNote.setLayoutManager(linearLayoutManager);
         rcvListAllNote.setAdapter(noteAdapter);

@@ -1,6 +1,7 @@
 package vietmobi.net.noteapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -23,6 +24,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.adapter.ListFolderAdapter;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
@@ -222,6 +224,8 @@ public class Dialog {
                     FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().insertFolder(folder);
 
                     Toast.makeText(context, "Create folder successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
                     dialog.dismiss();
                 } else {
                     textInputLayout.setError("Less than 20 and greater than 0 characters");
@@ -263,6 +267,8 @@ public class Dialog {
                     FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().updateFolder(folder);
 
                     Toast.makeText(context, "Create folder successfully!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
                     dialog.dismiss();
                 } else {
                     textInputLayout.setError("Less than 20 and greater than 0 characters");

@@ -21,6 +21,9 @@ public interface NoteDAO {
     @Query("select * from all_note where title = :title")
     List<Note> checkNote(String title);
 
+    @Query("select * from all_note where id = :id")
+    Note getNote(int id);
+
     @Update
     void updateNote(Note note);
 
@@ -38,4 +41,7 @@ public interface NoteDAO {
 
     @Query("select * from all_note where ofFolder = :id")
     List<Note> listNoteOfFolder(int id);
+
+    @Query("select count(ofFolder) from all_note where ofFolder =:id")
+    int getCountNoteOfFolder(int id);
 }

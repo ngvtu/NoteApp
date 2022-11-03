@@ -11,6 +11,12 @@
     <color name="colorIcon">#48454e</color>
     <color name="orange">#ffa447</color>
     <color name="colorDialog">#fff1ea</color>
-    <color name="colorItemFolder">#e7dfec</color>
+    <color name="hong">#ffa6c4</color>
+    <color name="xanhnuocbien">#7ecbff</color>
+    <color name="hongnhe">#ffa4a3</color>
+    <color name="xanhngoc">#1eccc3</color>
+    <color name="cam">#ffa447</color>
+
+
 
 </resources>

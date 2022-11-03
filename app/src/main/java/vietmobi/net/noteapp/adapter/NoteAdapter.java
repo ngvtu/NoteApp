@@ -3,6 +3,7 @@ package vietmobi.net.noteapp.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.Dialog;
@@ -43,7 +45,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     public static final int MY_REQUEST_CODE = 10;
     private List<Note> listNote;
     private Context context;
-    private boolean isLocked;
     Folder folder;
     ListFolderAdapter listFolderAdapter;
     List<Folder> listFolder;
@@ -77,6 +78,32 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         holder.tvContent.setText(note.getContent());
         holder.tvTitle.setText(note.getTitle());
         holder.tvLastTimeEdit.setText(note.getTime());
+        if (note.isFavorite() == true) {
+            holder.viewFavorite.setImageResource(R.drawable.ic_favorite);
+        }
+        holder.viewFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (note.isFavorite() == false) {
+                    note.setFavorite(true);
+                    holder.viewFavorite.setImageResource(R.drawable.ic_favorite);
+                    Toast.makeText(view.getContext(), "Add to favorite", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    note.setFavorite(false);
+                    holder.viewFavorite.setImageResource(R.drawable.ic_favorite_border);
+                    Toast.makeText(view.getContext(), "Remove from favorite", Toast.LENGTH_SHORT).show();
+                }
+                NoteDatabase.getInstance(view.getContext()).noteDAO().updateNote(note);
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickGoToUpDate(note);
+            }
+        });
 
         holder.btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,17 +114,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
-                            case R.id.add_to_favorite:
-                                note.setFavorite(true);
-                                NoteDatabase.getInstance(view.getContext()).noteDAO().updateNote(note);
-                                Toast.makeText(view.getContext(), "Add to favorite", Toast.LENGTH_SHORT).show();
-                                return true;
                             case R.id.share:
                                 Toast.makeText(view.getContext(), "Share", Toast.LENGTH_SHORT).show();
                                 return true;
                             case R.id.move:
                                 showDialogMoveToFolder();
-                                note.setOfFolder("1");
+                                SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putInt("id_note", note.getId());
+                                editor.apply();
                                 return true;
                             case R.id.lock:
                                 return true;
@@ -113,6 +138,18 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         });
     }
 
+    private int getRandomColor(){
+        List<Integer> colorBackground = new ArrayList<>();
+        colorBackground.add(R.color.xanhngoc);
+        colorBackground.add(R.color.xanhnuocbien);
+        colorBackground.add(R.color.hongnhe);
+        colorBackground.add(R.color.cam);
+        colorBackground.add(R.color.hong);
+        Random random = new Random();
+        int number = random.nextInt(colorBackground.size());
+        return colorBackground.get(number);
+    }
+
     private void onClickGoToUpDate(Note note) {
         Intent intent = new Intent(context, UpdateNoteActivity.class);
         Bundle bundle = new Bundle();
@@ -124,6 +161,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     }
 
     public void showDialogMoveToFolder() {
+
         final android.app.Dialog dialog = new android.app.Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottom_sheet_move_to_folder);
@@ -195,7 +233,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout line_note;
-        ImageView btnMenu;
+        ImageView btnMenu, viewFavorite;
         TextView tvTitle, tvContent, tvLastTimeEdit;
 
         public ViewHolder(@NonNull View itemView) {
@@ -205,6 +243,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             this.tvContent = itemView.findViewById(R.id.tvContent);
             this.line_note = itemView.findViewById(R.id.line_note);
             this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
+            this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
         }
     }
 

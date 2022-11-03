@@ -29,10 +29,15 @@ public class FavoriteFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
-        addEvents(view);
+        initViews(view);
+        AddEvents();
         addData();
         getNoteToEdit();
         return view;
+    }
+
+    private void AddEvents() {
+
     }
 
     private void getNoteToEdit() {
@@ -51,7 +56,7 @@ public class FavoriteFragment extends Fragment {
         rcvFavoriteNote.setAdapter(noteAdapter);
     }
 
-    private void addEvents(View view) {
+    private void initViews(View view) {
         rcvFavoriteNote = view.findViewById(R.id.rcvFavoriteNote);
     }
 }

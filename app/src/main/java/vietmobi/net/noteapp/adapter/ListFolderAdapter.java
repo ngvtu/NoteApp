@@ -2,12 +2,12 @@ package vietmobi.net.noteapp.adapter;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +17,9 @@ import com.google.android.material.button.MaterialButton;
 import java.util.List;
 
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
+import vietmobi.net.noteapp.model.Note;
 
 public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.ViewHolder> {
     private List<Folder> listFolder;
@@ -48,12 +50,25 @@ public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.Vi
             return;
         }
         holder.tvNameFolder.setText(folder.getNameFolder());
-        holder.tvTotal.setText("1");
+        int count = NoteDatabase.getInstance(context).noteDAO().getCountNoteOfFolder(folder.getId());
+        holder.tvTotal.setText(""+count);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "" +folder.getId(), Toast.LENGTH_SHORT).show();
+                SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                int idNote = sharedPreferences.getInt("id_note",0);
+
+                // Gan gia tri ofFolder
+                int idFolder = folder.getId();
+                Note note = NoteDatabase.getInstance(context).noteDAO().getNote(idNote);
+                note.setOfFolder(""+idFolder);
+                NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+
+                // Gui du lieu di
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("id_folder", idFolder);
+                editor.apply();
 
             }
         });

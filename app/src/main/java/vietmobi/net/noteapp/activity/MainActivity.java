@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView btnSettings;
     FloatingActionButton btnAdd;
     Dialog dialog = new Dialog();
+    Context context;
     private boolean showed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +56,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.navigation_favorite:
                         fragment = new FavoriteFragment();
                         loadFragment(fragment);
+                        NoteDatabase.getInstance(context).noteDAO().listFavoriteNote();
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                NoteDatabase.getInstance(view.getContext()).noteDAO().listFavoriteNote();
                                 Toast.makeText(MainActivity.this, "In favorite", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
+                                startActivity(intent);
                             }
                         });
                         return true;

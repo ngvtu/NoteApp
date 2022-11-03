@@ -27,8 +27,10 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.activity.NoteOfFolderActivity;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
+import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder>{
@@ -64,13 +66,17 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         }
         holder.btnMenu.setImageResource(R.drawable.ic_menu_vertical);
         holder.tvName.setText(folder.getNameFolder());
-        holder.tvTotal.setText("+0");
+
+        int id = folder.getId();
+        int count = NoteDatabase.getInstance(context).noteDAO().getCountNoteOfFolder(id);
+        holder.tvTotal.setText(""+count);
         holder.tvLastTimeEdit.setText(folder.getTimeLastEditFolder());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, NoteOfFolderActivity.class);
+                intent.putExtra("id_folderNote", folder.getId());
                 context.startActivity(intent);
             }
         });
@@ -137,6 +143,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                                 FolderNoteDatabase.getInstance(context).folderNoteDAO().deleteFolder(folder);
                                                 sweetAlertDialog.dismissWithAnimation();
                                                 notifyDataSetChanged();
+                                                Intent intent = new Intent(context, MainActivity.class);
+                                                context.startActivity(intent);
                                             }
                                         })
                                         .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
@@ -156,13 +164,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         });
     }
 
-    private void getFolderToEdit() {
-
-    }
-
-    private void onClickShowAllNote(Folder folder) {
-        Toast.makeText(context, folder.getNameFolder(), Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public int getItemCount() {
