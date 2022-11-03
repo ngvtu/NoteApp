@@ -2,6 +2,7 @@ package vietmobi.net.noteapp.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,6 +27,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -48,6 +53,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     Folder folder;
     ListFolderAdapter listFolderAdapter;
     List<Folder> listFolder;
+    private String filename = "internalStorage.txt";
+
+    //Thư mục do mình đặt
+    private String filepath = "ThuMucCuaToi";
+    File myInternalFile;
 
     public NoteAdapter(List listNote, Context context) {
         this.listNote = listNote;
@@ -114,9 +124,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
-                            case R.id.share:
-                                Toast.makeText(view.getContext(), "Share", Toast.LENGTH_SHORT).show();
-                                return true;
                             case R.id.move:
                                 showDialogMoveToFolder();
                                 SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
@@ -129,6 +136,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                             case R.id.delete:
                                 deleteNote(note);
                                 return true;
+                            case R.id.share_pdf:
+                                sharePDF(note);
+                                return true;
                         }
                         return false;
                     }
@@ -138,7 +148,30 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         });
     }
 
-    private int getRandomColor(){
+    private void sharePDF(Note note) {
+        Toast.makeText(context, "SHARE PDF", Toast.LENGTH_SHORT).show();
+
+        ContextWrapper contextWrapper = new ContextWrapper(context.getApplicationContext());
+        File directory = contextWrapper.getDir(filepath, Context.MODE_PRIVATE);
+        myInternalFile = new File(directory, filename);
+        String content = note.getContent();
+        String title = note.getTitle();
+        try {
+            FileOutputStream fos = new FileOutputStream(myInternalFile);
+            fos.write(title.getBytes());
+            fos.write("\n".getBytes());
+            fos.write(content.getBytes());
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(contextWrapper, "create file ok", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private int getRandomColor() {
         List<Integer> colorBackground = new ArrayList<>();
         colorBackground.add(R.color.xanhngoc);
         colorBackground.add(R.color.xanhnuocbien);
@@ -231,21 +264,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        RelativeLayout line_note;
-        ImageView btnMenu, viewFavorite;
-        TextView tvTitle, tvContent, tvLastTimeEdit;
+public class ViewHolder extends RecyclerView.ViewHolder {
+    RelativeLayout line_note;
+    ImageView btnMenu, viewFavorite;
+    TextView tvTitle, tvContent, tvLastTimeEdit;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            this.btnMenu = itemView.findViewById(R.id.btnMenu);
-            this.tvTitle = itemView.findViewById(R.id.tvTitle);
-            this.tvContent = itemView.findViewById(R.id.tvContent);
-            this.line_note = itemView.findViewById(R.id.line_note);
-            this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
-            this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
-        }
+    public ViewHolder(@NonNull View itemView) {
+        super(itemView);
+        this.btnMenu = itemView.findViewById(R.id.btnMenu);
+        this.tvTitle = itemView.findViewById(R.id.tvTitle);
+        this.tvContent = itemView.findViewById(R.id.tvContent);
+        this.line_note = itemView.findViewById(R.id.line_note);
+        this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
+        this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
     }
+}
 
 }
 

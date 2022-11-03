@@ -1,9 +1,11 @@
 package vietmobi.net.noteapp;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -28,12 +34,53 @@ import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.adapter.ListFolderAdapter;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
+import vietmobi.net.noteapp.model.Note;
 
 public class Dialog {
     String PASSWORD = "1612";
     Folder folder;
     ListFolderAdapter listFolderAdapter;
     List<Folder> listFolder;
+    Context context;
+
+    private String filename = "internalStorage.txt";
+
+    //Thư mục do mình đặt
+    private String filepath = "ThuMucCuaToi";
+    File myInternalFile;
+
+
+    public void createFile(Note note){
+        ContextWrapper contextWrapper = new ContextWrapper(context.getApplicationContext());
+        File directory = contextWrapper.getDir(filepath, Context.MODE_PRIVATE);
+        myInternalFile = new File(directory, filename);
+        String content = note.getContent();
+        String title = note.getTitle();
+        try {
+            FileOutputStream fos = new FileOutputStream(myInternalFile);
+            fos.write(title.getBytes());
+            fos.write("/n".getBytes());
+            fos.write(content.getBytes());
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(contextWrapper, "create file ok", Toast.LENGTH_SHORT).show();
+
+        Intent intent= new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+
+        intent.setType("text/*");
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse( ""+filepath));
+
+
+        if (intent.resolveActivity(context.getPackageManager()) != null){
+            context.startActivity(Intent.createChooser(intent, "Share file"));
+        }
+
+    }
 
     public void showDialogChangePassWord(Context context) {
         final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
