@@ -17,6 +17,24 @@ public class Note implements Serializable {
     private String ofFolder;
     private boolean isFavorite;
     private String time;
+    private boolean isLocked;
+
+    public Note(String title, String content, String ofFolder, boolean isFavorite, String time, boolean isLocked) {
+        this.title = title;
+        this.content = content;
+        this.ofFolder = ofFolder;
+        this.isFavorite = isFavorite;
+        this.time = time;
+        this.isLocked = isLocked;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
 
     public Note(String title, String content, String ofFolder, boolean isFavorite, String time) {
         this.title = title;

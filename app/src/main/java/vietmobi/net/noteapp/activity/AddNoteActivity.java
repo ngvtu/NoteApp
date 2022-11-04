@@ -64,6 +64,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
             showKeyboard();
         } else {
             saveNoteToDB();
+            hiddenKeyboard();
             startActivity(intent);
         }
     }

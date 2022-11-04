@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -26,6 +28,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -85,12 +89,22 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             return;
         }
         holder.btnMenu.setImageResource(R.drawable.ic_menu_vertical);
-        holder.tvContent.setText(note.getContent());
-        holder.tvTitle.setText(note.getTitle());
-        holder.tvLastTimeEdit.setText(note.getTime());
+        if (note.isLocked() == true){
+            holder.tvContent.setVisibility(View.GONE);
+            holder.tvTitle.setVisibility(View.GONE);
+            holder.tvLastTimeEdit.setText(note.getTime());
+            holder.viewLock.setImageResource(R.drawable.ic_lock_new);
+        }else {
+            holder.tvContent.setText(note.getContent());
+            holder.tvTitle.setText(note.getTitle());
+            holder.tvLastTimeEdit.setText(note.getTime());
+            holder.viewLock.setVisibility(View.GONE);
+        }
+
         if (note.isFavorite() == true) {
             holder.viewFavorite.setImageResource(R.drawable.ic_favorite);
         }
+
         holder.viewFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +125,43 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onClickGoToUpDate(note);
+                if (note.isLocked() == true){
+                    Toast.makeText(context, "Tesst", Toast.LENGTH_SHORT).show();
+                    final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+                    Window window = dialog.getWindow();
+                    dialog.setContentView(R.layout.dialog_enter_passwd);
+                    TextInputLayout textInputLayout = dialog.findViewById(R.id.textInputLayout2);
+                    TextInputEditText edtNewPassWorld = dialog.findViewById(R.id.edtPassWorld);
+                    TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+                    TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    btnAccept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String pass = String.valueOf(edtNewPassWorld.getText());
+                            SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                            String passWordApp = sharedPreferences.getString("pass", "");
+                            if (pass.equals(passWordApp)) {
+                                onClickGoToUpDate(note);
+                                dialog.dismiss();
+                            } else {
+                                textInputLayout.setError("Invalid password");
+                                textInputLayout.requestFocus();
+                            }
+                        }
+                    });
+                    dialog.show();
+                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    window.setGravity(Gravity.CENTER);
+                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                } else {
+                    onClickGoToUpDate(note);
+                }
             }
         });
 
@@ -132,6 +182,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                                 editor.apply();
                                 return true;
                             case R.id.lock:
+                                SharedPreferences sharedPreferences1 = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                String passNote = sharedPreferences1.getString("pass", "");
+                                 if (passNote.equals("")){
+                                     Toast.makeText(context, "You have not set a password!!", Toast.LENGTH_SHORT).show();
+                                     Dialog dialog = new Dialog();
+                                     dialog.showDialogSetPassWord(context);
+                                 } else{
+                                     note.setLocked(true);
+                                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                     Toast.makeText(context, "Lock", Toast.LENGTH_SHORT).show();
+                                 }
                                 return true;
                             case R.id.delete:
                                 deleteNote(note);
@@ -168,8 +229,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             e.printStackTrace();
         }
         Toast.makeText(contextWrapper, "create file ok", Toast.LENGTH_SHORT).show();
-    }
 
+//        "/data/data/vietmobi.net.noteapp/app_ThuMucCuaToi/internalStorage.txt""file://" +
+        File file = new File(Environment.getExternalStorageDirectory().toString(), "/" +filename );
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/*");
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("data/data/vietmobi.net.noteapp/app_ThuMucCuaToi/internalStorage.txt"));
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Sharing file...");
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, "Sharing File...");
+        context.startActivity(Intent.createChooser(sharingIntent, "Share File"));
+    }
 
     private int getRandomColor() {
         List<Integer> colorBackground = new ArrayList<>();
@@ -266,7 +335,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
 public class ViewHolder extends RecyclerView.ViewHolder {
     RelativeLayout line_note;
-    ImageView btnMenu, viewFavorite;
+    ImageView btnMenu, viewFavorite, viewLock;
     TextView tvTitle, tvContent, tvLastTimeEdit;
 
     public ViewHolder(@NonNull View itemView) {
@@ -277,6 +346,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         this.line_note = itemView.findViewById(R.id.line_note);
         this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
         this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
+        this.viewLock = itemView.findViewById(R.id.viewLock);
     }
 }
 

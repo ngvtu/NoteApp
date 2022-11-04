@@ -2,6 +2,7 @@ package vietmobi.net.noteapp.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.google.android.material.button.MaterialButton;
 import java.util.List;
 
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
 import vietmobi.net.noteapp.model.Note;
@@ -69,7 +71,8 @@ public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.Vi
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("id_folder", idFolder);
                 editor.apply();
-
+                Intent intent = new Intent(context, MainActivity.class);
+                context.startActivity(intent);
             }
         });
     }

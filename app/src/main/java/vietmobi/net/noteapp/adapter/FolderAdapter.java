@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
@@ -118,6 +119,10 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                             FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().updateFolder(folder);
 
                                             Toast.makeText(context, "Update folder successfully!", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(context, MainActivity.class);
+                                            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                            inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
+                                            context.startActivity(intent);
                                             dialog.dismiss();
                                         } else {
                                             textInputLayout.setError("Less than 20 and greater than 0 characters");
@@ -144,6 +149,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                                 sweetAlertDialog.dismissWithAnimation();
                                                 notifyDataSetChanged();
                                                 Intent intent = new Intent(context, MainActivity.class);
+                                                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
                                                 context.startActivity(intent);
                                             }
                                         })
