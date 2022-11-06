@@ -44,4 +44,7 @@ public interface NoteDAO {
 
     @Query("select count(ofFolder) from all_note where ofFolder =:id")
     int getCountNoteOfFolder(int id);
+
+    @Query("select * from all_note where isLocked = 1")
+    List<Note> listNoteIsLocked();
 }

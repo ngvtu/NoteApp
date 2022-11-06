@@ -43,6 +43,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.RecyclerViewInterface;
+import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.activity.UpdateNoteActivity;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.database.NoteDatabase;
@@ -89,12 +90,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             return;
         }
         holder.btnMenu.setImageResource(R.drawable.ic_menu_vertical);
-        if (note.isLocked() == true){
+        if (note.isLocked() == true) {
             holder.tvContent.setVisibility(View.GONE);
             holder.tvTitle.setVisibility(View.GONE);
             holder.tvLastTimeEdit.setText(note.getTime());
             holder.viewLock.setImageResource(R.drawable.ic_lock_new);
-        }else {
+        } else {
             holder.tvContent.setText(note.getContent());
             holder.tvTitle.setText(note.getTitle());
             holder.tvLastTimeEdit.setText(note.getTime());
@@ -125,8 +126,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (note.isLocked() == true){
-                    Toast.makeText(context, "Tesst", Toast.LENGTH_SHORT).show();
+                if (note.isLocked() == true) {
+//                    Toast.makeText(context, "Tesst", Toast.LENGTH_SHORT).show();
                     final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
                     Window window = dialog.getWindow();
                     dialog.setContentView(R.layout.dialog_enter_passwd);
@@ -184,15 +185,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                             case R.id.lock:
                                 SharedPreferences sharedPreferences1 = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
                                 String passNote = sharedPreferences1.getString("pass", "");
-                                 if (passNote.equals("")){
-                                     Toast.makeText(context, "You have not set a password!!", Toast.LENGTH_SHORT).show();
-                                     Dialog dialog = new Dialog();
-                                     dialog.showDialogSetPassWord(context);
-                                 } else{
-                                     note.setLocked(true);
-                                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
-                                     Toast.makeText(context, "Lock", Toast.LENGTH_SHORT).show();
-                                 }
+                                if (passNote.equals("")) {
+                                    Toast.makeText(context, "You have not set a password!!", Toast.LENGTH_SHORT).show();
+                                    Dialog dialog = new Dialog();
+                                    dialog.showDialogSetPassWord(context);
+//                                     note.setLocked(true);
+//                                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                } else {
+                                    note.setLocked(true);
+                                    NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                    Toast.makeText(context, "Lock", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    context.startActivity(intent);
+                                }
                                 return true;
                             case R.id.delete:
                                 deleteNote(note);
@@ -231,7 +236,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
         Toast.makeText(contextWrapper, "create file ok", Toast.LENGTH_SHORT).show();
 
 //        "/data/data/vietmobi.net.noteapp/app_ThuMucCuaToi/internalStorage.txt""file://" +
-        File file = new File(Environment.getExternalStorageDirectory().toString(), "/" +filename );
+        File file = new File(Environment.getExternalStorageDirectory().toString(), "/" + filename);
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/*");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("data/data/vietmobi.net.noteapp/app_ThuMucCuaToi/internalStorage.txt"));
@@ -305,7 +310,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                         NoteDatabase.getInstance(context).noteDAO().deleteNote(note);
                         Toast.makeText(context, "Delete note successfully", Toast.LENGTH_SHORT).show();
                         sweetAlertDialog.dismissWithAnimation();
-                        notifyDataSetChanged();
+                        Intent intent = new Intent(context, MainActivity.class);
+                        context.startActivity(intent);
+//                        notifyDataSetChanged();
                     }
                 })
                 .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
@@ -332,23 +339,22 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
 
     }
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        RelativeLayout line_note;
+        ImageView btnMenu, viewFavorite, viewLock;
+        TextView tvTitle, tvContent, tvLastTimeEdit;
 
-public class ViewHolder extends RecyclerView.ViewHolder {
-    RelativeLayout line_note;
-    ImageView btnMenu, viewFavorite, viewLock;
-    TextView tvTitle, tvContent, tvLastTimeEdit;
-
-    public ViewHolder(@NonNull View itemView) {
-        super(itemView);
-        this.btnMenu = itemView.findViewById(R.id.btnMenu);
-        this.tvTitle = itemView.findViewById(R.id.tvTitle);
-        this.tvContent = itemView.findViewById(R.id.tvContent);
-        this.line_note = itemView.findViewById(R.id.line_note);
-        this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
-        this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
-        this.viewLock = itemView.findViewById(R.id.viewLock);
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            this.btnMenu = itemView.findViewById(R.id.btnMenu);
+            this.tvTitle = itemView.findViewById(R.id.tvTitle);
+            this.tvContent = itemView.findViewById(R.id.tvContent);
+            this.line_note = itemView.findViewById(R.id.line_note);
+            this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
+            this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
+            this.viewLock = itemView.findViewById(R.id.viewLock);
+        }
     }
-}
 
 }
 

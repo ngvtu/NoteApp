@@ -35,10 +35,11 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.adapter.ListFolderAdapter;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
+import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Folder;
 import vietmobi.net.noteapp.model.Note;
 
-public class Dialog {
+public class Dialog implements View.OnClickListener {
     String PASSWORD = "1612";
     Folder folder;
     ListFolderAdapter listFolderAdapter;
@@ -51,7 +52,7 @@ public class Dialog {
     private String filepath = "ThuMucCuaToi";
     File myInternalFile;
 
-//    SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+    //    SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
     public void createFile(Note note) {
         ContextWrapper contextWrapper = new ContextWrapper(context.getApplicationContext());
         File directory = contextWrapper.getDir(filepath, Context.MODE_PRIVATE);
@@ -148,9 +149,18 @@ public class Dialog {
             @Override
             public void onClick(View view) {
                 String pass = String.valueOf(edtNewPassWorld.getText());
-                if (pass.equals(PASSWORD)) {
+                SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                String PASS = sharedPreferences.getString("pass", "");
+
+                if (pass.equals(PASS)) {
                     Toast.makeText(context, "Delete Password", Toast.LENGTH_SHORT).show();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("pass", "");
+                    editor.apply();
+                    deletePasswdAllNote();
                     dialog.dismiss();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
                 } else {
                     textInputLayout.setError("Invalid password");
                     textInputLayout.requestFocus();
@@ -163,25 +173,52 @@ public class Dialog {
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
+    private void deletePasswdAllNote() {
+        List<Note> listNoteLocked = NoteDatabase.getInstance(context).noteDAO().listNoteIsLocked();
+        for (int i = 0; i < listNoteLocked.size(); i++) {
+            Note note = listNoteLocked.get(i);
+            note.setLocked(false);
+            NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+        }
+    }
+
     public void showDialogSettings(Context context) {
-        final android.app.Dialog dialog = new android.app.Dialog(context);
+        android.app.Dialog dialog = new android.app.Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottom_sheet_settings);
+        createDialog();
 
         TextView tvChangePasswd = dialog.findViewById(R.id.tvChangePasswd);
         TextView tvDeletePasswd = dialog.findViewById(R.id.tvDeletePasswd);
+        TextView tvSetPasswd = dialog.findViewById(R.id.tvSetPasswd);
         TextView tvAuthentication = dialog.findViewById(R.id.tvAuthentication);
         TextView tvPrivacyPolicy = dialog.findViewById(R.id.tvPrivacyPolicy);
         TextView tvMoreApp = dialog.findViewById(R.id.tvMoreApp);
         TextView tvShareWF = dialog.findViewById(R.id.tvShareWF);
         TextView tvRateMe5Star = dialog.findViewById(R.id.tvRateMe5Star);
         TextView tvFeedback = dialog.findViewById(R.id.tvFeedback);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        String PASS = sharedPreferences.getString("pass", "");
+        if (PASS.equals("")){
+            tvDeletePasswd.setVisibility(View.GONE);
+            tvChangePasswd.setVisibility(View.GONE);
+        } else {
+            tvSetPasswd.setVisibility(View.GONE);
+        }
+        tvSetPasswd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogSetPassWord(context);
+            }
+        });
+
         tvChangePasswd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
-                String passWordApp = sharedPreferences.getString("pass", "");
-                if (passWordApp.equals("")) {
+//                SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                String PASS = sharedPreferences.getString("pass", "");
+                Toast.makeText(context, PASS, Toast.LENGTH_SHORT).show();
+                if (PASS.equals("")) {
                     showDialogSetPassWord(context);
                 } else {
                     showDialogChangePassWord(context);
@@ -191,7 +228,13 @@ public class Dialog {
         tvDeletePasswd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialogDeletePassword(context);
+//                SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                String PASS = sharedPreferences.getString("pass", "");
+                if (PASS.equals("")) {
+                    showDialogSetPassWord(context);
+                } else {
+                    showDialogDeletePassword(context);
+                }
             }
         });
         tvAuthentication.setOnClickListener(new View.OnClickListener() {
@@ -253,6 +296,15 @@ public class Dialog {
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    private void createDialog() {
+
+    }
+
     public void showDialogSetPassWord(Context context) {
         final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
         Window window = dialog.getWindow();
@@ -278,6 +330,8 @@ public class Dialog {
                     editor.putString("pass", pass);
                     editor.apply();
                     dialog.dismiss();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
                 } else {
                     textInputLayout.setError("Less than 20 and greater than 4 characters");
                     textInputLayout.requestFocus();
@@ -427,4 +481,6 @@ public class Dialog {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
+
+
 }

@@ -65,6 +65,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btnSave:
                 checkNoteToSave(intent);
+                hiddenKeyboard();
                 break;
         }
     }

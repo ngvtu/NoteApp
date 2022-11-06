@@ -95,6 +95,17 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvSetPasswd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:padding="7dp"
+        android:text="Set password"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/tvDeletePasswd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

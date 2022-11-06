@@ -148,9 +148,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                                 FolderNoteDatabase.getInstance(context).folderNoteDAO().deleteFolder(folder);
                                                 sweetAlertDialog.dismissWithAnimation();
                                                 notifyDataSetChanged();
-                                                Intent intent = new Intent(context, MainActivity.class);
                                                 InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                                                 inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
+                                                Intent intent = new Intent(context, MainActivity.class);
                                                 context.startActivity(intent);
                                             }
                                         })

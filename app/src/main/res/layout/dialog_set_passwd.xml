@@ -22,7 +22,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter password"
+        android:hint="Enter your password"
         android:padding="15dp"
         app:counterEnabled="true"
         app:counterMaxLength="20"
