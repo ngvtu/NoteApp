@@ -33,7 +33,7 @@ public interface NoteDAO {
     @Query("delete from all_note")
     void deleteAllNote();
 
-    @Query("select * from all_note where title like '%' || :title || '%'")
+    @Query("select * from all_note where (title like '%' || :title || '%') and isLocked = 0")
     List<Note> findNote(String title);
 
     @Query("select * from all_note where isFavorite = 1")

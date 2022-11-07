@@ -8,15 +8,20 @@ import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.concurrent.Executor;
 
 import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
@@ -33,7 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FloatingActionButton btnAdd;
     Dialog dialog = new Dialog();
     Context context;
+    TextView tvAuthentication;
     private boolean showed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +49,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initViews();
         addEvents();
         loadFragment(new AllNoteFragment());
+
+    }
+
+    public void showAuthentication(Context context) {
+        Executor executor = ContextCompat.getMainExecutor(context);
+
+        BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_SHORT).show();
+                MainActivity.this.finish();
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Toast.makeText(getApplicationContext(), "xac thuc sinh trac thanh cong", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                Toast.makeText(getApplicationContext(), "Xac thuc sinh trac khong thanh cong, vui long thu lai", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Xác thực người dùng")
+                .setDescription("Quét vân tay để xác thực danh tính")
+                .setNegativeButtonText("Thoát")
+                .build();
+
+        biometricPrompt.authenticate(promptInfo);
     }
 
     private void addEvents() {
         btnSettings.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
+//        tvAuthentication.setOnClickListener(this);
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -99,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViews() {
+        tvAuthentication = findViewById(R.id.tvAuthentication);
         bottomNavigation = findViewById(R.id.bottomNavigation);
         btnSettings = findViewById(R.id.btnSettings);
         btnAdd = findViewById(R.id.btnAdd);
@@ -113,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnAdd:
                 Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.tvAuthentication:
+                showAuthentication(this);
                 break;
         }
     }
@@ -135,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void showBtnAdd(){
-        if (!showed){
+    public void showBtnAdd() {
+        if (!showed) {
             btnAdd.setVisibility(View.INVISIBLE);
             TranslateAnimation animate = new TranslateAnimation(0, 0, btnAdd.getHeight(), 0);
             animate.setDuration(500);
@@ -144,7 +190,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             btnAdd.startAnimation(animate);
         }
     }
-    public void hideBtnAdd(){
+
+    public void hideBtnAdd() {
         btnAdd.setVisibility(View.INVISIBLE);
         TranslateAnimation animate = new TranslateAnimation(0, 0, 0, btnAdd.getHeight());
         animate.setDuration(0);

@@ -237,18 +237,11 @@ public class Dialog implements View.OnClickListener {
                 }
             }
         });
-        tvAuthentication.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context, "Authentication", Toast.LENGTH_SHORT).show();
-            }
-        });
         tvPrivacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, "PrivacyPolicy", Toast.LENGTH_SHORT).show();
                 Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com.vn/?hl=vi"));
-
                 context.startActivity(browse);
             }
         });

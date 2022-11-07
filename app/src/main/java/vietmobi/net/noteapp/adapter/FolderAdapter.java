@@ -1,9 +1,11 @@
 package vietmobi.net.noteapp.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -88,12 +91,15 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
 
                 PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_settings_folder, popupMenu.getMenu());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    popupMenu.setForceShowIcon(true);
+                }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.edit:
-                                final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+                                final Dialog dialog = new Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
                                 Window window = dialog.getWindow();
                                 dialog.setContentView(R.layout.dialog_edit_folder);
 
@@ -112,7 +118,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                     @Override
                                     public void onClick(View view) {
                                         String name = String.valueOf(edtNameFolder.getText());
-                                        String timeLastEditNote = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+                                        String timeLastEditNote = DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
                                         if (name.length() <= 20 && name.length() > 0) {
                                             folder.setNameFolder(name);
                                             folder.setTimeLastEditFolder(timeLastEditNote);

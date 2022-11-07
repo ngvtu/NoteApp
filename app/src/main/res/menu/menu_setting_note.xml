@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/move"
-        android:icon="@drawable/ic_move_to_favorite"
+        android:icon="@drawable/ic_file_move"
         android:title="Move to folder" />
 
     <item
@@ -12,7 +12,7 @@
         <menu>
             <item
                 android:id="@+id/share_pdf"
-                android:icon="@drawable/ic_pdf"
+                android:icon="@drawable/ic_as_pdf"
                 android:title="File Pdf" />
             <item
                 android:id="@+id/share_text_file"
@@ -25,13 +25,20 @@
         </menu>
     </item>
 
-
     <item
         android:id="@+id/lock"
-        android:icon="@drawable/ic_lock"
+        android:icon="@drawable/ic_lock_new"
         android:title="Lock" />
+    <item
+        android:id="@+id/unLock"
+        android:icon="@drawable/ic_lock_open"
+        android:title="Unlock" />
     <item
         android:id="@+id/delete"
         android:icon="@drawable/ic_delete"
         android:title="Delete" />
+    <item
+        android:id="@+id/deleteFromFolder"
+        android:icon="@drawable/ic_delete"
+        android:title="Delete from folder" />
 </menu>

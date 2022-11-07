@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Gravity;
@@ -171,6 +172,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_setting_note, popupMenu.getMenu());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    popupMenu.setForceShowIcon(true);
+                }
+                if (note.isLocked()) {
+                    popupMenu.getMenu().findItem(R.id.lock).setVisible(false);
+                } else {
+                    popupMenu.getMenu().findItem(R.id.unLock).setVisible(false);
+                }
+                if (note.getOfFolder() == null) {
+                    popupMenu.getMenu().findItem(R.id.deleteFromFolder).setVisible(false);
+                } else {
+                    popupMenu.getMenu().findItem(R.id.move).setVisible(false);
+                }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
@@ -198,6 +212,44 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> im
                                     Intent intent = new Intent(context, MainActivity.class);
                                     context.startActivity(intent);
                                 }
+                                return true;
+                            case R.id.unLock:
+                                final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+                                Window window = dialog.getWindow();
+                                dialog.setContentView(R.layout.dialog_enter_passwd);
+                                TextInputLayout textInputLayout = dialog.findViewById(R.id.textInputLayout2);
+                                TextInputEditText edtNewPassWorld = dialog.findViewById(R.id.edtPassWorld);
+                                TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+                                TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+                                btnCancel.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                btnAccept.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        String pass = String.valueOf(edtNewPassWorld.getText());
+                                        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                        String passWordApp = sharedPreferences.getString("pass", "");
+                                        if (pass.equals(passWordApp)) {
+                                            note.setLocked(false);
+                                            NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                            Toast.makeText(context, "Unlock", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(context, MainActivity.class);
+                                            context.startActivity(intent);
+                                            dialog.dismiss();
+                                        } else {
+                                            textInputLayout.setError("Invalid password");
+                                            textInputLayout.requestFocus();
+                                        }
+                                    }
+                                });
+                                dialog.show();
+                                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                window.setGravity(Gravity.CENTER);
+                                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 return true;
                             case R.id.delete:
                                 deleteNote(note);
