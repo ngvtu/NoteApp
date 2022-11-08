@@ -2,6 +2,7 @@ package vietmobi.net.noteapp.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,20 +13,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricPrompt;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.concurrent.Executor;
+import java.util.List;
 
 import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
+import vietmobi.net.noteapp.adapter.NoteAdapter;
 import vietmobi.net.noteapp.adapter.ViewPagerAdapter;
 import vietmobi.net.noteapp.database.NoteDatabase;
+import vietmobi.net.noteapp.model.Note;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     BottomNavigationView bottomNavigation;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Dialog dialog = new Dialog();
     Context context;
     TextView tvAuthentication;
+    NoteAdapter noteAdapter;
+    List<Note> listNote;
     private boolean showed;
 
     @Override
@@ -46,43 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setUpViewPager();
     }
 
-    public void showAuthentication(Context context) {
-        Executor executor = ContextCompat.getMainExecutor(context);
-
-        BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_SHORT).show();
-                MainActivity.this.finish();
-            }
-
-            @Override
-            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                Toast.makeText(getApplicationContext(), "xac thuc sinh trac thanh cong", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onAuthenticationFailed() {
-                super.onAuthenticationFailed();
-                Toast.makeText(getApplicationContext(), "Xac thuc sinh trac khong thanh cong, vui long thu lai", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Xác thực người dùng")
-                .setDescription("Quét vân tay để xác thực danh tính")
-                .setNegativeButtonText("Thoát")
-                .build();
-
-        biometricPrompt.authenticate(promptInfo);
-    }
-
     private void addEvents() {
         btnSettings.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
-//        tvAuthentication.setOnClickListener(this);
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -90,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.navigation_favorite:
                         viewPager.setCurrentItem(1);
                         showBtnAdd();
-
                         NoteDatabase.getInstance(context).noteDAO().listFavoriteNote();
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -115,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.navigation_folder:
                         viewPager.setCurrentItem(2);
                         showBtnAdd();
+
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -151,9 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.tvAuthentication:
-                showAuthentication(this);
-                break;
         }
     }
 
@@ -173,22 +139,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (position){
                     case 0:
                         bottomNavigation.getMenu().findItem(R.id.navigation_all_note).setChecked(true);
+                        showBtnAdd();
                         break;
                     case 1:
                         bottomNavigation.getMenu().findItem(R.id.navigation_favorite).setChecked(true);
+                        listNote = NoteDatabase.getInstance(context).noteDAO().listFavoriteNote();
+                        NoteAdapter noteAdapter = new NoteAdapter(listNote, context);
+                        noteAdapter.setData(listNote);
+                        showBtnAdd();
                         break;
                     case 2:
                         bottomNavigation.getMenu().findItem(R.id.navigation_folder).setChecked(true);
+                        showBtnAdd();
                         break;
                     case 3:
                         bottomNavigation.getMenu().findItem(R.id.navigation_find).setChecked(true);
+                        hideBtnAdd();
                         break;
                 }
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
     }

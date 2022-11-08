@@ -117,7 +117,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                     note.setFavorite(true);
                     holder.viewFavorite.setImageResource(R.drawable.ic_favorite);
                     Toast.makeText(view.getContext(), "Add to favorite", Toast.LENGTH_SHORT).show();
-
+                    NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+                    setData(listNote);
                 } else {
                     note.setFavorite(false);
                     holder.viewFavorite.setImageResource(R.drawable.ic_favorite_border);
@@ -208,13 +210,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                     Toast.makeText(context, "You have not set a password!!", Toast.LENGTH_SHORT).show();
                                     Dialog dialog = new Dialog();
                                     dialog.showDialogSetPassWord(context);
-//                                     note.setLocked(true);
-//                                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                    NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+//                                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+//                                    setData(listNote);
                                 } else {
                                     note.setLocked(true);
                                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
                                     Toast.makeText(context, "Lock", Toast.LENGTH_SHORT).show();
-//                                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+                                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
                                     setData(listNote);
                                 }
                                 return true;
@@ -334,7 +337,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     public void showDialogMoveToFolder() {
-
         final android.app.Dialog dialog = new android.app.Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottom_sheet_move_to_folder);
@@ -405,6 +407,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         window.setGravity(Gravity.CENTER);
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
+
     private void deleteNote(Note note) {
         new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Confirm delete note")
