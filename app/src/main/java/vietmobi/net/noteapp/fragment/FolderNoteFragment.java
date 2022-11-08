@@ -1,10 +1,12 @@
 package vietmobi.net.noteapp.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,12 +32,18 @@ public class FolderNoteFragment extends Fragment {
 
         rcvFolderNote = view.findViewById(R.id.rcvFolderNote);
         addData();
-        checkItem();
         return view;
     }
 
-    private void checkItem() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        addData();
+    }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
     }
 
     public void addData() {

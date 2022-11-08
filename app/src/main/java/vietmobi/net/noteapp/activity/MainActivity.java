@@ -26,6 +26,9 @@ import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.adapter.NoteAdapter;
 import vietmobi.net.noteapp.adapter.ViewPagerAdapter;
 import vietmobi.net.noteapp.database.NoteDatabase;
+import vietmobi.net.noteapp.fragment.AllNoteFragment;
+import vietmobi.net.noteapp.fragment.FavoriteFragment;
+import vietmobi.net.noteapp.fragment.FolderNoteFragment;
 import vietmobi.net.noteapp.model.Note;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initViews();
         addEvents();
-        setUpViewPager();
+//        setUpViewPager();
     }
 
     private void addEvents() {
@@ -59,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.navigation_favorite:
                         viewPager.setCurrentItem(1);
                         showBtnAdd();
-                        NoteDatabase.getInstance(context).noteDAO().listFavoriteNote();
+                        FavoriteFragment favoriteFragment = (FavoriteFragment) viewPager.getAdapter().instantiateItem(viewPager, 1);
+                        favoriteFragment.addData();
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -68,10 +72,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 startActivity(intent);
                             }
                         });
-                        return true;
+                        break;
                     case R.id.navigation_all_note:
                         viewPager.setCurrentItem(0);
                         showBtnAdd();
+                        AllNoteFragment allNoteFragment = (AllNoteFragment) viewPager.getAdapter().instantiateItem(viewPager, 0);
+                        allNoteFragment.configNote();
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -79,11 +85,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 startActivity(intent);
                             }
                         });
-                        return true;
+                        break;
                     case R.id.navigation_folder:
                         viewPager.setCurrentItem(2);
                         showBtnAdd();
-
+                        FolderNoteFragment folderNoteFragment = (FolderNoteFragment) viewPager.getAdapter().instantiateItem(viewPager, 2);
+                        folderNoteFragment.addData();
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -91,13 +98,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 dialog.showDialogCreateFolder(MainActivity.this);
                             }
                         });
-                        return true;
+                        break;
                     case R.id.navigation_find:
                         viewPager.setCurrentItem(3);
                         hideBtnAdd();
-                        return true;
+                        break;
                 }
-                return false;
+                return true;
+            }
+        });
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        viewPager.setAdapter(viewPagerAdapter);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position){
+                    case 0:
+                        bottomNavigation.getMenu().findItem(R.id.navigation_all_note).setChecked(true);
+                        listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+                        NoteAdapter noteAdapter = new NoteAdapter(listNote, context);
+                        noteAdapter.setData(listNote);
+                        showBtnAdd();
+                        break;
+                    case 1:
+                        bottomNavigation.getMenu().findItem(R.id.navigation_favorite).setChecked(true);
+                        listNote = NoteDatabase.getInstance(context).noteDAO().listFavoriteNote();
+                        NoteAdapter noteAdapter2 = new NoteAdapter(listNote, context);
+                        noteAdapter2.setData(listNote);
+                        showBtnAdd();
+                        break;
+                    case 2:
+                        bottomNavigation.getMenu().findItem(R.id.navigation_folder).setChecked(true);
+                        showBtnAdd();
+                        break;
+                    case 3:
+                        bottomNavigation.getMenu().findItem(R.id.navigation_find).setChecked(true);
+                        hideBtnAdd();
+                        break;
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
             }
         });
     }
@@ -123,59 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void setUpViewPager(){
-        showBtnAdd();
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        viewPager.setAdapter(viewPagerAdapter);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position){
-                    case 0:
-                        bottomNavigation.getMenu().findItem(R.id.navigation_all_note).setChecked(true);
-                        showBtnAdd();
-                        break;
-                    case 1:
-                        bottomNavigation.getMenu().findItem(R.id.navigation_favorite).setChecked(true);
-                        listNote = NoteDatabase.getInstance(context).noteDAO().listFavoriteNote();
-                        NoteAdapter noteAdapter = new NoteAdapter(listNote, context);
-                        noteAdapter.setData(listNote);
-                        showBtnAdd();
-                        break;
-                    case 2:
-                        bottomNavigation.getMenu().findItem(R.id.navigation_folder).setChecked(true);
-                        showBtnAdd();
-                        break;
-                    case 3:
-                        bottomNavigation.getMenu().findItem(R.id.navigation_find).setChecked(true);
-                        hideBtnAdd();
-                        break;
-                }
-            }
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-    }
-
-//    public void loadFragment(Fragment fragment) {
-//        showBtnAdd();
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        fragmentTransaction.replace(R.id.viewPager, fragment);
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.commit();
-//    }
-
-//    private void hiddenKeyboard() {
-//        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-//        inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
-//    }
 
     public void showBtnAdd() {
         if (!showed) {

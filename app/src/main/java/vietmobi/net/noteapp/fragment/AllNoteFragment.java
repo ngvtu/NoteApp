@@ -2,10 +2,12 @@ package vietmobi.net.noteapp.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,14 +34,19 @@ public class AllNoteFragment extends Fragment implements ListenerChangeData {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_all_note, container, false);
-
-        initViews(view);
+        rcvListAllNote = view.findViewById(R.id.rcvListAllNote);
         configNote();
         return view;
     }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
 
-    private void initViews(View view) {
-        rcvListAllNote = view.findViewById(R.id.rcvListAllNote);
+    @Override
+    public void onResume() {
+        super.onResume();
+        configNote();
     }
 
     public void configNote() {

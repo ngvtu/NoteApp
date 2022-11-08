@@ -69,10 +69,8 @@ public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.Vi
                 note.setOfFolder(""+idFolder);
                 NoteDatabase.getInstance(context).noteDAO().updateNote(note);
 
-                listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
-                noteAdapter.setData(listNote);
-
-
+//                listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+//                noteAdapter.setData(listNote);
 
                 // Gui du lieu di
                 SharedPreferences.Editor editor = sharedPreferences.edit();

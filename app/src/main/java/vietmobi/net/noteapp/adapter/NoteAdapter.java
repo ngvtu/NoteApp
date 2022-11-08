@@ -419,7 +419,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                         NoteDatabase.getInstance(context).noteDAO().deleteNote(note);
                         Toast.makeText(context, "Delete note successfully", Toast.LENGTH_SHORT).show();
                         sweetAlertDialog.dismissWithAnimation();
-
+                        listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
                         setData(listNote);
                     }
                 })

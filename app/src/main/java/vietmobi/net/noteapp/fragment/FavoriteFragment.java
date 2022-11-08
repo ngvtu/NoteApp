@@ -1,10 +1,13 @@
 package vietmobi.net.noteapp.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,7 +24,7 @@ import vietmobi.net.noteapp.model.Note;
 public class FavoriteFragment extends Fragment {
     RecyclerView rcvFavoriteNote;
     NoteAdapter noteAdapter;
-    List<Note> noteList;
+    List<Note> listNote;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,26 +33,32 @@ public class FavoriteFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
         initViews(view);
-        AddEvents();
         addData();
-        getNoteToEdit();
         return view;
     }
 
-    private void AddEvents() {
-
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.e("Vietmobi", "Reload Fragment1");
+        noteAdapter = new NoteAdapter(listNote, getContext());
+        listNote = new ArrayList<>();
+        listNote = NoteDatabase.getInstance(getContext()).noteDAO().getListNote();
+        noteAdapter.setData(listNote);
     }
 
-    private void getNoteToEdit() {
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        addData();
     }
 
-    private void addData() {
-        noteAdapter = new NoteAdapter(noteList, getContext());
-        noteList = new ArrayList<>();
+    public void addData() {
+        noteAdapter = new NoteAdapter(listNote, getContext());
+        listNote = new ArrayList<>();
 
-        noteList = NoteDatabase.getInstance(getContext()).noteDAO().listFavoriteNote();
-        noteAdapter.setData(noteList);
+        listNote = NoteDatabase.getInstance(getContext()).noteDAO().listFavoriteNote();
+        noteAdapter.setData(listNote);
 
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 2);
         rcvFavoriteNote.setLayoutManager(linearLayoutManager);
