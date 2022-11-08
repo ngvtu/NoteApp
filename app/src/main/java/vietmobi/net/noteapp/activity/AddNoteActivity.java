@@ -61,10 +61,10 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
         if (title.equals("")) {
             Toast.makeText(AddNoteActivity.this, "Title not null", Toast.LENGTH_SHORT).show();
             edtTitle.requestFocus();
-            showKeyboard();
+//            showKeyboard();
         } else {
             saveNoteToDB();
-            hiddenKeyboard();
+//            hiddenKeyboard();
             startActivity(intent);
         }
     }
@@ -77,9 +77,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(intent);
         } else {
             new SweetAlertDialog(AddNoteActivity.this, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("Xác nhận")
-                    .setContentText("Bạn có muốn lưu thay đổi?")
-                    .setConfirmText("Có")
+                    .setTitleText("Confirm?")
+                    .setContentText("Do you want to save the changes?")
+                    .setConfirmText("Yes")
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -96,7 +96,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         }
                     })
-                    .setCancelButton("Không", new SweetAlertDialog.OnSweetClickListener() {
+                    .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();

@@ -52,7 +52,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         edtContent.setText(note.getContent());
         edtTitle.requestFocus(edtContent.length());
 
-        showKeyboard();
+//        showKeyboard();
     }
 
     @Override
@@ -61,11 +61,9 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()) {
             case R.id.btnBack:
                 checkNoteToBack(intent);
-                hiddenKeyboard();
                 break;
             case R.id.btnSave:
                 checkNoteToSave(intent);
-                hiddenKeyboard();
                 break;
         }
     }
@@ -79,7 +77,6 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         } else {
             upDateNoteToDatabase();
             startActivity(intent);
-            hiddenKeyboard();
         }
     }
 
@@ -88,7 +85,6 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         content = edtContent.getText().toString();
         if (title.equals("") && content.equals("")) {
             startActivity(intent);
-            hiddenKeyboard();
         } else {
             new SweetAlertDialog(UpdateNoteActivity.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Xác nhận")
@@ -105,7 +101,6 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
                                 upDateNoteToDatabase();
                                 startActivity(intent);
                                 sweetAlertDialog.dismissWithAnimation();
-                                hiddenKeyboard();
                             }
                         }
                     })
@@ -114,7 +109,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
                             startActivity(intent);
-                            hiddenKeyboard();
+//                            hiddenKeyboard();
                         }
                     })
                     .show();
@@ -131,7 +126,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         Toast.makeText(this, "Update note successfully", Toast.LENGTH_SHORT).show();
 
         Intent intentResult = new Intent();
-        hiddenKeyboard();
+//        hiddenKeyboard();
         setResult(Activity.RESULT_OK, intentResult);
         finish();
     }
@@ -145,10 +140,5 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
     private void showKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    private void hiddenKeyboard() {
-        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
     }
 }

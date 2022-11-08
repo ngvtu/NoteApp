@@ -14,17 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import vietmobi.net.noteapp.ListenerChangeData;
 import vietmobi.net.noteapp.R;
-import vietmobi.net.noteapp.RecyclerViewInterface;
 import vietmobi.net.noteapp.adapter.NoteAdapter;
 import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.model.Note;
 
-public class AllNoteFragment extends Fragment implements RecyclerViewInterface {
+public class AllNoteFragment extends Fragment implements ListenerChangeData {
     RecyclerView rcvListAllNote;
     NoteAdapter noteAdapter;
     List<Note> listNote;
     Context context;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,7 +43,6 @@ public class AllNoteFragment extends Fragment implements RecyclerViewInterface {
     }
 
     public void configNote() {
-
         noteAdapter = new NoteAdapter(listNote, getContext());
         listNote = new ArrayList<>();
         listNote = NoteDatabase.getInstance(getContext()).noteDAO().getListNote();
@@ -50,10 +50,5 @@ public class AllNoteFragment extends Fragment implements RecyclerViewInterface {
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 2);
         rcvListAllNote.setLayoutManager(linearLayoutManager);
         rcvListAllNote.setAdapter(noteAdapter);
-    }
-
-    @Override
-    public void loadFragment(Fragment fragment) {
-
     }
 }

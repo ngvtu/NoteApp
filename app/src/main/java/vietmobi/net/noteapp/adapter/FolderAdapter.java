@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
@@ -31,7 +30,6 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.R;
-import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.activity.NoteOfFolderActivity;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.database.NoteDatabase;
@@ -88,7 +86,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         holder.btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_settings_folder, popupMenu.getMenu());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -125,10 +122,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                             FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().updateFolder(folder);
 
                                             Toast.makeText(context, "Update folder successfully!", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(context, MainActivity.class);
-                                            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                            inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
-                                            context.startActivity(intent);
+                                            listFolder = FolderNoteDatabase.getInstance(context).folderNoteDAO().getListFolder();
+                                            setData(listFolder);
                                             dialog.dismiss();
                                         } else {
                                             textInputLayout.setError("Less than 20 and greater than 0 characters");
@@ -154,10 +149,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                                 FolderNoteDatabase.getInstance(context).folderNoteDAO().deleteFolder(folder);
                                                 sweetAlertDialog.dismissWithAnimation();
                                                 notifyDataSetChanged();
-                                                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
-                                                Intent intent = new Intent(context, MainActivity.class);
-                                                context.startActivity(intent);
+                                                listFolder = FolderNoteDatabase.getInstance(context).folderNoteDAO().getListFolder();
+                                                setData(listFolder);
                                             }
                                         })
                                         .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {

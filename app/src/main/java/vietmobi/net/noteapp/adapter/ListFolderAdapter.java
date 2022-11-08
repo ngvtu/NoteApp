@@ -25,6 +25,8 @@ import vietmobi.net.noteapp.model.Note;
 
 public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.ViewHolder> {
     private List<Folder> listFolder;
+    private List<Note> listNote;
+    private NoteAdapter noteAdapter;
     private Context context;
 
     public ListFolderAdapter(List<Folder> listFolder, Context context) {
@@ -66,6 +68,11 @@ public class ListFolderAdapter extends RecyclerView.Adapter<ListFolderAdapter.Vi
                 Note note = NoteDatabase.getInstance(context).noteDAO().getNote(idNote);
                 note.setOfFolder(""+idFolder);
                 NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+
+                listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+                noteAdapter.setData(listNote);
+
+
 
                 // Gui du lieu di
                 SharedPreferences.Editor editor = sharedPreferences.edit();
