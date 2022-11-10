@@ -11,8 +11,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +52,7 @@ import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.activity.UpdateNoteActivity;
 import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.database.NoteDatabase;
+import vietmobi.net.noteapp.fragment.AllNoteFragment;
 import vietmobi.net.noteapp.model.Folder;
 import vietmobi.net.noteapp.model.Note;
 
@@ -60,10 +65,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     ListFolderAdapter listFolderAdapter;
     List<Folder> listFolder;
     private String filename = "internalStorage.txt";
+    AllNoteFragment allNoteFragment;
+
+    boolean isEnable = false;
+    boolean isSelectAll = false;
+    ArrayList<Note> selectList = new ArrayList<>();
+
+    Activity activity;
 
     //Thư mục do mình đặt
     private String filepath = "ThuMucCuaToi";
     File myInternalFile;
+
+    public NoteAdapter(Activity activity){
+        this.activity = activity;
+    }
 
     public NoteAdapter(List listNote, Context context) {
         this.listNote = listNote;
@@ -82,6 +98,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.line_note, parent, false);
+
 
         return new ViewHolder(view);
     }
@@ -168,6 +185,89 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 } else {
                     onClickGoToUpDate(note);
                 }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+//                Check condition
+                if (!isEnable) {
+//                    When action mode is not enable
+//                    initialize action mode
+                    ActionMode.Callback callback = new ActionMode.Callback() {
+                        @Override
+                        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+//                            Initialize menu inflate
+                            MenuInflater menuInflater = actionMode.getMenuInflater();
+
+                            menuInflater.inflate(R.menu.main_toolbar, menu);
+
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+
+                            isEnable = true;
+
+                            clickItem(holder);
+
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.delete:
+                                    for (Note note : listNote) {
+                                        listNote.remove(note);
+                                    }
+                                    actionMode.finish();
+                                    break;
+                                case R.id.move:
+                                    Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case R.id.share:
+                                    Toast.makeText(context, "Share coming soon", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case R.id.select_all:
+                                    if (selectList.size() == listNote.size()) {
+                                        isSelectAll = false;
+
+                                        selectList.clear();
+                                    } else {
+                                        isSelectAll = true;
+
+                                        selectList.clear();
+
+                                        selectList.addAll(listNote);
+                                    }
+                                    notifyDataSetChanged();
+                                    break;
+                            }
+                            return true;
+                        }
+
+                        @Override
+                        public void onDestroyActionMode(ActionMode actionMode) {
+                            // when action mode is destroy
+                            // set isEnable false
+                            isEnable=false;
+                            // set isSelectAll false
+                            isSelectAll=false;
+                            // clear select array list
+                            selectList.clear();
+                            // notify adapter
+                            notifyDataSetChanged();
+                        }
+                    };
+
+                    ((AppCompatActivity) view.getContext()).startActionMode(callback);
+                } else{
+                    clickItem(holder);
+                }
+                return true;
             }
         });
 
@@ -274,6 +374,25 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 popupMenu.show();
             }
         });
+    }
+
+    private void clickItem(ViewHolder holder) {
+        Note note = listNote.get(holder.getAdapterPosition());
+        if (holder.viewSelect.getVisibility() == View.GONE) {
+
+            holder.viewSelect.setVisibility(View.INVISIBLE);
+
+            holder.itemView.setBackgroundColor(Color.LTGRAY);
+
+            selectList.add(note);
+        } else {
+            holder.viewSelect.setVisibility(View.GONE);
+
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
+            selectList.remove(note);
+        }
+
     }
 
     private void sharePDF(Note note) {
@@ -432,7 +551,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout line_note;
-        ImageView btnMenu, viewFavorite, viewLock;
+        ImageView btnMenu, viewFavorite, viewLock, viewSelect;
         TextView tvTitle, tvContent, tvLastTimeEdit;
 
         public ViewHolder(@NonNull View itemView) {
@@ -444,6 +563,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             this.tvLastTimeEdit = itemView.findViewById(R.id.tvLastTimeEdit);
             this.viewFavorite = itemView.findViewById(R.id.viewFavorite);
             this.viewLock = itemView.findViewById(R.id.viewLock);
+            this.viewSelect = itemView.findViewById(R.id.viewSelect);
         }
     }
 

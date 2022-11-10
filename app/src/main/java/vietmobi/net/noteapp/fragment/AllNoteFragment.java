@@ -2,7 +2,6 @@ package vietmobi.net.noteapp.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,6 @@ public class AllNoteFragment extends Fragment implements ListenerChangeData {
     RecyclerView rcvListAllNote;
     NoteAdapter noteAdapter;
     List<Note> listNote;
-    Context context;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
