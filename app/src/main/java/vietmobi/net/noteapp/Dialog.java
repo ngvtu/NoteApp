@@ -386,8 +386,9 @@ public class Dialog implements View.OnClickListener {
                     Toast.makeText(context, "Create folder successfully!", Toast.LENGTH_SHORT).show();
                     InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
-                    Intent intent = new Intent(context, MainActivity.class);
-                    context.startActivity(intent);
+//                    Intent intent = new Intent(context, MainActivity.class);
+//                    context.startActivity(intent);
+
                     dialog.dismiss();
                 } else {
                     textInputLayout.setError("Less than 20 and greater than 0 characters");

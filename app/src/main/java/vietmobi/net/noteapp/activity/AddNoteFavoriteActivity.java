@@ -45,13 +45,13 @@ public class AddNoteFavoriteActivity extends AppCompatActivity implements View.O
         String title = edtTitle.getText().toString();
         String content = edtContent.getText().toString();
         String time = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
-        note = new Note(title, content, true, time);
+        Note note = new Note(title, content, true, time);
 
         // Insert Note to Database
         NoteDatabase.getInstance(this).noteDAO().insertNote(note);
         Toast.makeText(this, "Add Note successfully", Toast.LENGTH_SHORT).show();
-        edtTitle.setText("");
-        edtContent.setText("");
+//        edtTitle.setText("");
+//        edtContent.setText("");
         hiddenKeyboard();
     }
 

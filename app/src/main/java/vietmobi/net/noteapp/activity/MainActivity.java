@@ -2,11 +2,18 @@ package vietmobi.net.noteapp.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.biometrics.BiometricPrompt;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,17 +25,22 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Calendar;
 import java.util.List;
 
 import vietmobi.net.noteapp.Dialog;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.adapter.NoteAdapter;
 import vietmobi.net.noteapp.adapter.ViewPagerAdapter;
+import vietmobi.net.noteapp.database.FolderNoteDatabase;
 import vietmobi.net.noteapp.database.NoteDatabase;
 import vietmobi.net.noteapp.fragment.AllNoteFragment;
 import vietmobi.net.noteapp.fragment.FavoriteFragment;
 import vietmobi.net.noteapp.fragment.FolderNoteFragment;
+import vietmobi.net.noteapp.model.Folder;
 import vietmobi.net.noteapp.model.Note;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -42,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     NoteAdapter noteAdapter;
     List<Note> listNote;
     private boolean showed;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +63,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initViews();
         addEvents();
 //        setUpViewPager();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
     private void addEvents() {
@@ -68,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(View view) {
                                 Toast.makeText(MainActivity.this, "In favorite", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
+                                Intent intent = new Intent(MainActivity.this, AddNoteFavoriteActivity.class);
                                 startActivity(intent);
                             }
                         });
@@ -94,8 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         btnAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Dialog dialog = new Dialog();
-                                dialog.showDialogCreateFolder(MainActivity.this);
+                                showDialogCreateFolder(context);
                             }
                         });
                         break;
@@ -109,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -118,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onPageSelected(int position) {
-                switch (position){
+                switch (position) {
                     case 0:
                         bottomNavigation.getMenu().findItem(R.id.navigation_all_note).setChecked(true);
                         listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
@@ -143,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                 }
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -155,6 +188,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSettings = findViewById(R.id.btnSettings);
         btnAdd = findViewById(R.id.btnAdd);
         viewPager = findViewById(R.id.viewPager);
+    }
+
+    public void showDialogCreateFolder(Context context) {
+        final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+        Window window = dialog.getWindow();
+        dialog.setContentView(R.layout.dialog_create_folder);
+        TextInputLayout textInputLayout = dialog.findViewById(R.id.tilNameFolder);
+        TextInputEditText edtNameFolder = dialog.findViewById(R.id.edtNameFolder);
+        TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+        TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        btnAccept.setOnClickListener(new View.OnClickListener() {
+            Folder folder;
+            @Override
+            public void onClick(View view) {
+                String name = String.valueOf(edtNameFolder.getText());
+                String timeLastEditNote = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+
+                if (name.length() <= 20 && name.length() > 0) {
+
+                    folder = new Folder(name, timeLastEditNote);
+                    FolderNoteDatabase.getInstance(view.getContext()).folderNoteDAO().insertFolder(folder);
+
+                    Toast.makeText(context, "Create folder successfully!", Toast.LENGTH_SHORT).show();
+                    InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
+                    dialog.dismiss();
+                } else {
+                    textInputLayout.setError("Less than 20 and greater than 0 characters");
+                    textInputLayout.requestFocus();
+                }
+            }
+        });
+        dialog.show();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     @Override

@@ -72,7 +72,7 @@
 
     <ImageView
         android:id="@+id/viewLock"
-        android:layout_width="99dp"
+        android:layout_width="50dp"
         android:layout_height="73dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"

@@ -104,7 +104,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
                                 TextInputEditText edtNameFolder = dialog.findViewById(R.id.edtNameFolder);
                                 TextView btnCancel = dialog.findViewById(R.id.btnCancel);
                                 TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+                                edtNameFolder.setText(folder.getNameFolder());
                                 edtNameFolder.requestFocus();
+
                                 btnCancel.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

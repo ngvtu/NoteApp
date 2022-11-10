@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/dialog_background"
+    android:orientation="vertical"
     android:padding="10dp">
 
     <TextView
@@ -37,21 +37,21 @@
             android:id="@+id/btnLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:autoSizeTextType="none"
             android:layout_weight="1"
             android:background="@drawable/bg_edt_search"
             android:text="Light"
             android:textColor="@color/black"
             app:icon="@drawable/ic_light"
-            app:iconSize="20dp"
+            app:iconSize="20sp"
             app:iconTint="@color/black" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:layout_weight="1"
+            android:autoSizeTextType="uniform"
             android:background="@drawable/bg_edt_search"
             android:text="Dark"
             android:textColor="@color/black"
@@ -63,8 +63,8 @@
             android:id="@+id/btnSystem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:layout_weight="1"
+            android:autoSizeTextType="uniform"
             android:background="@drawable/bg_edt_search"
             android:text="System"
             android:textColor="@color/black"

@@ -43,7 +43,6 @@ import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import vietmobi.net.noteapp.Dialog;
-import vietmobi.net.noteapp.ListenerChangeData;
 import vietmobi.net.noteapp.R;
 import vietmobi.net.noteapp.activity.MainActivity;
 import vietmobi.net.noteapp.activity.UpdateNoteActivity;
@@ -53,10 +52,9 @@ import vietmobi.net.noteapp.model.Folder;
 import vietmobi.net.noteapp.model.Note;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    ListenerChangeData listenerChangeData;
-
     public static final int MY_REQUEST_CODE = 10;
     private List<Note> listNote;
+    private List<Note> listNoteOld;
     private Context context;
     Folder folder;
     ListFolderAdapter listFolderAdapter;
@@ -69,6 +67,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     public NoteAdapter(List listNote, Context context) {
         this.listNote = listNote;
+        this.listNoteOld = listNote;
         this.context = context;
     }
 
@@ -76,6 +75,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         this.listNote = noteArrayList;
         notifyDataSetChanged();
     }
+
 
     @NonNull
     @Override
@@ -88,7 +88,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Note note = listNote.get(position);
         if (note == null) {
             return;
@@ -187,8 +186,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 }
                 if (note.getOfFolder() == null) {
                     popupMenu.getMenu().findItem(R.id.deleteFromFolder).setVisible(false);
-                } else {
-                    popupMenu.getMenu().findItem(R.id.move).setVisible(false);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -217,8 +214,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                     note.setLocked(true);
                                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
                                     Toast.makeText(context, "Lock", Toast.LENGTH_SHORT).show();
-                                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
-                                    setData(listNote);
+//                                    holder.viewLock.setImageResource(R.drawable.ic_lock_new);
+//                                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+//                                    setData(listNote);
+                                    notifyItemChanged(listNote.indexOf(note));
                                 }
                                 return true;
                             case R.id.unLock:
@@ -245,8 +244,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                             note.setLocked(false);
                                             NoteDatabase.getInstance(context).noteDAO().updateNote(note);
                                             Toast.makeText(context, "Unlock", Toast.LENGTH_SHORT).show();
-                                            listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
-                                            setData(listNote);
+                                            notifyItemChanged(listNote.indexOf(note));
                                             dialog.dismiss();
                                         } else {
                                             textInputLayout.setError("Invalid password");
@@ -266,7 +264,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                 sharePDF(note);
                                 return true;
                             case R.id.deleteFromFolder:
-                                deleteFromFolder(note);
+                                note.setOfFolder(null);
+                                NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                notifyItemChanged(listNote.indexOf(note));
                         }
                         return false;
                     }
@@ -274,13 +274,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                 popupMenu.show();
             }
         });
-    }
-
-    private void deleteFromFolder(Note note) {
-        note.setOfFolder(null);
-        NoteDatabase.getInstance(context).noteDAO().updateNote(note);
-        listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
-        setData(listNote);
     }
 
     private void sharePDF(Note note) {
@@ -333,7 +326,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         intent.putExtras(bundle);
 
         ((Activity) context).startActivityForResult(intent, MY_REQUEST_CODE);
-        context.startActivity(intent);
+//        context.startActivity(intent);
     }
 
     public void showDialogMoveToFolder() {

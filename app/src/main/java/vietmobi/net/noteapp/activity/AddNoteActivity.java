@@ -101,6 +101,7 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
                             startActivity(intent);
+
                         }
                     })
                     .show();
