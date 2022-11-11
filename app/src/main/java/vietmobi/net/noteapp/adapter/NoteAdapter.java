@@ -69,6 +69,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     boolean isEnable = false;
     boolean isSelectAll = false;
+//    boolean isSelect;
     ArrayList<Note> selectList = new ArrayList<>();
 
     Activity activity;
@@ -120,6 +121,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             holder.tvLastTimeEdit.setText(note.getTime());
             holder.viewLock.setVisibility(View.GONE);
         }
+
+//        holder.itemView.setBackgroundColor(getRandomColor());
 
         if (note.isFavorite() == true) {
             holder.viewFavorite.setImageResource(R.drawable.ic_favorite);
@@ -211,7 +214,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
                             isEnable = true;
 
-                            clickItem(holder);
+                            clickItem(holder, position);
 
                             return true;
                         }
@@ -274,14 +277,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                             isSelectAll = false;
                             // clear select array list
                             selectList.clear();
+
+
+
+                            holder.viewSelect.setVisibility(View.GONE);
                             // notify adapter
                             notifyDataSetChanged();
+
                         }
                     };
 
                     ((AppCompatActivity) view.getContext()).startActionMode(callback);
                 } else {
-                    clickItem(holder);
+                    clickItem(holder, position);
                 }
                 return true;
             }
@@ -395,21 +403,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
 
-    private void clickItem(ViewHolder holder) {
-        Note note = listNote.get(holder.getAdapterPosition());
-        if (holder.viewSelect.getVisibility() == View.GONE) {
-
-            holder.viewSelect.setVisibility(View.INVISIBLE);
-
-            holder.itemView.setBackgroundColor(Color.LTGRAY);
-
-            selectList.add(note);
-        } else {
+    private void clickItem(ViewHolder holder, int positions) {
+        Note note = listNote.get(positions);
+        if (!isEnable) {
             holder.viewSelect.setVisibility(View.GONE);
 
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
-
             selectList.remove(note);
+        } else {
+            holder.viewSelect.setVisibility(View.VISIBLE);
+
+            selectList.add(note);
         }
     }
 
