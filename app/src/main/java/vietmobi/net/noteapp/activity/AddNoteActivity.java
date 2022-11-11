@@ -56,9 +56,9 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void checkNoteToSave(Intent intent) {
-        title = edtTitle.getText().toString();
-        content = edtContent.getText().toString();
-        if (title.equals("")) {
+        title = edtTitle.getText().toString().trim();
+        content = edtContent.getText().toString().trim();
+        if (title.length() == 0) {
             Toast.makeText(AddNoteActivity.this, "Title not null", Toast.LENGTH_SHORT).show();
             edtTitle.requestFocus();
 //            showKeyboard();
@@ -70,8 +70,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void checkNoteToBack(Intent intent) {
-        title = edtTitle.getText().toString();
-        content = edtContent.getText().toString();
+        title = edtTitle.getText().toString().trim();
+        content = edtContent.getText().toString().trim();
         if (title.equals("") && content.equals("")) {
             hiddenKeyboard();
             startActivity(intent);
@@ -111,8 +111,8 @@ public class AddNoteActivity extends AppCompatActivity implements View.OnClickLi
 
     
     private void saveNoteToDB() {
-        String title = edtTitle.getText().toString();
-        String content = edtContent.getText().toString();
+        String title = edtTitle.getText().toString().trim();
+        String content = edtContent.getText().toString().trim();
         String time = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
         Note note = new Note(title, content, time);
 

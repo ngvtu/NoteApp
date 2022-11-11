@@ -77,7 +77,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     private String filepath = "ThuMucCuaToi";
     File myInternalFile;
 
-    public NoteAdapter(Activity activity){
+    public NoteAdapter(Activity activity) {
         this.activity = activity;
     }
 
@@ -91,7 +91,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         this.listNote = noteArrayList;
         notifyDataSetChanged();
     }
-
 
     @NonNull
     @Override
@@ -134,8 +133,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                     holder.viewFavorite.setImageResource(R.drawable.ic_favorite);
                     Toast.makeText(view.getContext(), "Add to favorite", Toast.LENGTH_SHORT).show();
                     NoteDatabase.getInstance(context).noteDAO().updateNote(note);
-                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
-                    setData(listNote);
+                    notifyItemChanged(listNote.indexOf(note));
+//                    listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+//                    setData(listNote);
                 } else {
                     note.setFavorite(false);
                     holder.viewFavorite.setImageResource(R.drawable.ic_favorite_border);
@@ -220,12 +220,27 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
                                 case R.id.delete:
-                                    for (Note note : listNote) {
-                                        listNote.remove(note);
+                                    for (Note note : selectList) {
+//                                        listNote.remove(note);
+                                        NoteDatabase.getInstance(context).noteDAO().deleteNote(note);
+                                        listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+                                        notifyDataSetChanged();
+                                        setData(listNote);
                                     }
                                     actionMode.finish();
                                     break;
                                 case R.id.move:
+                                    for (Note note : selectList) {
+//                                        listNote.remove(note);
+                                        showDialogMoveToFolder();
+                                        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putInt("id_note", note.getId());
+                                        editor.apply();
+//
+//                                        listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+//                                        setData(listNote);
+                                    }
                                     Toast.makeText(context, "Coming soon", Toast.LENGTH_SHORT).show();
                                     break;
                                 case R.id.share:
@@ -233,6 +248,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                     break;
                                 case R.id.select_all:
                                     if (selectList.size() == listNote.size()) {
+
                                         isSelectAll = false;
 
                                         selectList.clear();
@@ -253,9 +269,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                         public void onDestroyActionMode(ActionMode actionMode) {
                             // when action mode is destroy
                             // set isEnable false
-                            isEnable=false;
+                            isEnable = false;
                             // set isSelectAll false
-                            isSelectAll=false;
+                            isSelectAll = false;
                             // clear select array list
                             selectList.clear();
                             // notify adapter
@@ -264,7 +280,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                     };
 
                     ((AppCompatActivity) view.getContext()).startActionMode(callback);
-                } else{
+                } else {
                     clickItem(holder);
                 }
                 return true;
@@ -299,6 +315,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                                 editor.apply();
                                 listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
                                 setData(listNote);
+                                notifyItemChanged(listNote.indexOf(note));
                                 return true;
                             case R.id.lock:
                                 SharedPreferences sharedPreferences1 = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
@@ -366,6 +383,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                             case R.id.deleteFromFolder:
                                 note.setOfFolder(null);
                                 NoteDatabase.getInstance(context).noteDAO().updateNote(note);
+                                listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
                                 notifyItemChanged(listNote.indexOf(note));
                         }
                         return false;
@@ -375,6 +393,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             }
         });
     }
+
 
     private void clickItem(ViewHolder holder) {
         Note note = listNote.get(holder.getAdapterPosition());
@@ -392,7 +411,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
             selectList.remove(note);
         }
-
     }
 
     private void sharePDF(Note note) {
@@ -521,27 +539,70 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     private void deleteNote(Note note) {
-        new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Confirm delete note")
-                .setContentText("Are you sure?")
-                .setConfirmText("Yes")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+        if (note.isLocked()) {
+            final android.app.Dialog dialog = new android.app.Dialog(context/*, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen*/);
+            Window window = dialog.getWindow();
+            dialog.setContentView(R.layout.dialog_enter_passwd);
+            TextInputLayout textInputLayout = dialog.findViewById(R.id.textInputLayout2);
+            TextInputEditText edtNewPassWorld = dialog.findViewById(R.id.edtPassWorld);
+            TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+            TextView btnAccept = dialog.findViewById(R.id.btnAccept);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            btnAccept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String pass = String.valueOf(edtNewPassWorld.getText());
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+                    String passWordApp = sharedPreferences.getString("pass", "");
+                    if (pass.equals(passWordApp)) {
                         NoteDatabase.getInstance(context).noteDAO().deleteNote(note);
                         Toast.makeText(context, "Delete note successfully", Toast.LENGTH_SHORT).show();
-                        sweetAlertDialog.dismissWithAnimation();
+//                        notifyItemRemoved(listNote.indexOf(note));
+
                         listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
                         setData(listNote);
+                        dialog.dismiss();
+                    } else {
+                        textInputLayout.setError("Invalid password");
+                        textInputLayout.requestFocus();
                     }
-                })
-                .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismissWithAnimation();
-                    }
-                })
-                .show();
+                }
+            });
+            dialog.show();
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setGravity(Gravity.CENTER);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } else {
+            new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Confirm delete note")
+                    .setContentText("Are you sure?")
+                    .setConfirmText("Yes")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            NoteDatabase.getInstance(context).noteDAO().deleteNote(note);
+                            Toast.makeText(context, "Delete note successfully", Toast.LENGTH_SHORT).show();
+                            sweetAlertDialog.dismissWithAnimation();
+
+//                        notifyItemRemoved(listNote.indexOf(note));
+
+                            listNote = NoteDatabase.getInstance(context).noteDAO().getListNote();
+                            setData(listNote);
+                        }
+                    })
+                    .setCancelButton("No", new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismissWithAnimation();
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override

@@ -2,8 +2,8 @@ package vietmobi.net.noteapp.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -22,6 +22,7 @@ public class NoteOfFolderActivity extends AppCompatActivity {
     RecyclerView rcvListAllNote;
     TextView tvNameFolder;
     NoteAdapter noteAdapter;
+    ImageView viewFavorite;
     List<Note> listNote;
 
     @Override
@@ -44,6 +45,7 @@ public class NoteOfFolderActivity extends AppCompatActivity {
 
         listNote = NoteDatabase.getInstance(this).noteDAO().listNoteOfFolder(idFolder);
         noteAdapter.setData(listNote);
+
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 2);
         rcvListAllNote.setLayoutManager(linearLayoutManager);
         rcvListAllNote.setAdapter(noteAdapter);
@@ -56,6 +58,7 @@ public class NoteOfFolderActivity extends AppCompatActivity {
     private void initViews() {
         rcvListAllNote = findViewById(R.id.rcvListAllNote);
         tvNameFolder = findViewById(R.id.tvNameFolder);
+        viewFavorite = findViewById(R.id.viewFavorite);
     }
 
 }

@@ -83,7 +83,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
     private void checkNoteToBack(Intent intent) {
         title = edtTitle.getText().toString();
         content = edtContent.getText().toString();
-        if (title.equals("") && content.equals("")) {
+        if ((title.equals("") && content.equals("")) || (title.equals(edtTitle.getText().toString()) && content.equals(edtContent.getText().toString()))) {
             startActivity(intent);
         } else {
             new SweetAlertDialog(UpdateNoteActivity.this, SweetAlertDialog.WARNING_TYPE)
@@ -137,6 +137,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         edtTitle = findViewById(R.id.edtTitle);
         edtContent = findViewById(R.id.edtContent);
     }
+
     private void showKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);

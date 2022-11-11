@@ -22,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:gravity="center"
-        android:text="All Note"
+        android:text="Note of folder"
         android:textColor="#841918"
         android:textSize="30sp"
         android:textStyle="bold" />
