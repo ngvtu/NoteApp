@@ -58,6 +58,8 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(UpdateNoteActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         switch (view.getId()) {
             case R.id.btnBack:
                 checkNoteToBack(intent);
@@ -77,6 +79,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         } else {
             upDateNoteToDatabase();
             startActivity(intent);
+            finish();
         }
     }
 
@@ -85,6 +88,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
         content = edtContent.getText().toString();
         if ((title.equals("") && content.equals("")) || (title.equals(edtTitle.getText().toString()) && content.equals(edtContent.getText().toString()))) {
             startActivity(intent);
+            finish();
         } else {
             new SweetAlertDialog(UpdateNoteActivity.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Xác nhận")
@@ -100,6 +104,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
                             } else {
                                 upDateNoteToDatabase();
                                 startActivity(intent);
+                                finish();
                                 sweetAlertDialog.dismissWithAnimation();
                             }
                         }
@@ -109,6 +114,7 @@ public class UpdateNoteActivity extends AppCompatActivity implements View.OnClic
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
                             startActivity(intent);
+                            finish();
 //                            hiddenKeyboard();
                         }
                     })

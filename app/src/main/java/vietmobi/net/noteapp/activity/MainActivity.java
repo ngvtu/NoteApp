@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Dialog dialog = new Dialog();
     Context context;
     TextView tvAuthentication;
-    NoteAdapter noteAdapter;
     List<Note> listNote;
     private boolean showed;
     private boolean doubleBackToExitPressedOnce = false;

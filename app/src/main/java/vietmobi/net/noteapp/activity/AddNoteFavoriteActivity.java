@@ -65,6 +65,7 @@ public class AddNoteFavoriteActivity extends AppCompatActivity implements View.O
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(AddNoteFavoriteActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         switch (view.getId()) {
             case R.id.btnBack:
                 checkNoteToBack(intent);
@@ -85,6 +86,7 @@ public class AddNoteFavoriteActivity extends AppCompatActivity implements View.O
         } else {
             saveNoteToDB();
             startActivity(intent);
+            finishAndRemoveTask();
         }
     }
 
@@ -94,6 +96,7 @@ public class AddNoteFavoriteActivity extends AppCompatActivity implements View.O
         if (title.equals("") && content.equals("")) {
             hiddenKeyboard();
             startActivity(intent);
+            finishAndRemoveTask();
         } else {
             new SweetAlertDialog(AddNoteFavoriteActivity.this, SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Confirm")
@@ -110,6 +113,7 @@ public class AddNoteFavoriteActivity extends AppCompatActivity implements View.O
                             } else {
                                 saveNoteToDB();
                                 startActivity(intent);
+                                finishAndRemoveTask();
                                 sweetAlertDialog.dismissWithAnimation();
                                 hiddenKeyboard();
                             }
@@ -120,6 +124,7 @@ public class AddNoteFavoriteActivity extends AppCompatActivity implements View.O
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismissWithAnimation();
                             startActivity(intent);
+                            finishAndRemoveTask();
                         }
                     })
                     .show();

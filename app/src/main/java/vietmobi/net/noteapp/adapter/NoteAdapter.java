@@ -464,9 +464,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         Bundle bundle = new Bundle();
         bundle.putSerializable("note", note);
         intent.putExtras(bundle);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         ((Activity) context).startActivityForResult(intent, MY_REQUEST_CODE);
-//        context.startActivity(intent);
+//        ((Activity) context).finishAndRemoveTask();
     }
 
     public void showDialogMoveToFolder() {
@@ -528,6 +529,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                     inputMethodManager.toggleSoftInput(InputMethodManager.RESULT_HIDDEN, 0);
                     Intent intent = new Intent(context, MainActivity.class);
                     context.startActivity(intent);
+                    ((Activity) context).finishAndRemoveTask();
                     dialog.dismiss();
                 } else {
                     textInputLayout.setError("Less than 20 and greater than 0 characters");
